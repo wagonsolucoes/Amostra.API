@@ -1,0 +1,1 @@
+﻿Programado com .NET CORE 7

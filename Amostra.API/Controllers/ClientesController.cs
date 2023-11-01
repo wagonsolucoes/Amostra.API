@@ -1,8 +1,14 @@
 ﻿using Amostra.API.Data.Amostra;
 using Amostra.API.Models.Amostra;
+using Amostra.API.Models.WagonMail;
+using Amostra.API.ViewModel.Amostra;
+using AutoMapper;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Cliente = Amostra.API.Models.WagonMail.Cliente;
 
 namespace Amostra.API.Controllers
 {
@@ -11,42 +17,40 @@ namespace Amostra.API.Controllers
     public class ClientesController : ControllerBase
     {
         private readonly AmostraContext _context;
+        private readonly IMapper _mapper;
+        private IValidator<VMCliente> _validator;
 
-        public ClientesController(AmostraContext context)
+
+        public ClientesController(IMapper mapper, IValidator<VMCliente> validator, AmostraContext context)
         {
+            _mapper = mapper;
+            _validator = validator;
             _context = context;
         }
 
         // GET: api/Clientes
         [Authorize(Roles = "Administrator,Cliente")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cliente>>> GetClientes()
+        public async Task<ActionResult<IEnumerable<VMCliente>>> GetClientes()
         {
-          if (_context.Clientes == null)
-          {
-              return NotFound();
-          }
-            return await _context.Clientes.ToListAsync();
+            if (_context.Clientes == null)
+            {
+                return NotFound();
+            }
+            return _mapper.Map<List<VMCliente>>(await _context.Clientes.ToListAsync());
         }
 
         // GET: api/Clientes/5
 
         [Authorize(Roles = "Administrator,Cliente")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<Cliente>> GetCliente(string id)
+        public async Task<ActionResult<DtoCliente>> GetCliente(string id)
         {
-          if (_context.Clientes == null)
-          {
-              return NotFound();
-          }
-            var cliente = await _context.Clientes.FindAsync(id);
-
-            if (cliente == null)
+            if (_context.Clientes == null)
             {
                 return NotFound();
             }
-
-            return cliente;
+            return _mapper.Map<DtoCliente>(await _context.Clientes.FindAsync(id));
         }
 
         // PUT: api/Clientes/5
@@ -54,14 +58,20 @@ namespace Amostra.API.Controllers
 
         [Authorize(Roles = "Administrator,Cliente")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCliente(string id, Cliente cliente)
+        public async Task<IActionResult> PutCliente(string id, VMCliente model)
         {
-            if (id != cliente.CpfCnpj)
+            if (model.CpfCnpj.Length < 10)
             {
                 return BadRequest();
             }
 
-            _context.Entry(cliente).State = EntityState.Modified;
+            ValidationResult result = await _validator.ValidateAsync(model);
+            if (!result.IsValid)
+            {
+                return BadRequest(result);
+            }
+
+            _context.Entry(_mapper.Map<Cliente>(model)).State = EntityState.Modified;
 
             try
             {
@@ -87,30 +97,23 @@ namespace Amostra.API.Controllers
 
         [Authorize(Roles = "Administrator,Cliente")]
         [HttpPost]
-        public async Task<ActionResult<Cliente>> PostCliente(Cliente cliente)
+        public async Task<IActionResult> PostCliente(VMCliente model)
         {
-          if (_context.Clientes == null)
-          {
-              return Problem("Entity set 'AmostraContext.Clientes'  is null.");
-          }
-            _context.Clientes.Add(cliente);
-            try
+            Models.Amostra.Cliente cliente = new Models.Amostra.Cliente();
+            if (_context.Clientes == null)
             {
-                await _context.SaveChangesAsync();
+                return Problem("Entity set 'Clientes'  is null.");
             }
-            catch (DbUpdateException)
+            ValidationResult result = await _validator.ValidateAsync(model);
+            if (!result.IsValid)
             {
-                if (ClienteExists(cliente.CpfCnpj))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest(result);
             }
 
-            return CreatedAtAction("GetCliente", new { id = cliente.CpfCnpj }, cliente);
+            _context.Clientes.Add(_mapper.Map<Models.Amostra.Cliente>(model));
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("PostBairro", new { CpfCnpj = cliente.CpfCnpj }, model);
         }
 
         // DELETE: api/Clientes/5

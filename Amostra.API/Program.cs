@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using Wagon.API;
 
 namespace Amostra.API
 {
@@ -14,7 +15,10 @@ namespace Amostra.API
     {
         public static void Main(string[] args)
         {
+            IServiceCollection services = new ServiceCollection();
+
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddSingleton(MapperConfig.InitializeAutomapper());
             ConfigurationManager configuration = builder.Configuration;
 
             //builder.Services.AddDbContext<WagonMailContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("WagonMail")));
@@ -58,20 +62,7 @@ namespace Amostra.API
                     }
                 };
             });
-            //.AddJwtBearer(options =>
-            //{
-            //    options.SaveToken = true;
-            //    options.RequireHttpsMetadata = false;
-            //    options.TokenValidationParameters = new TokenValidationParameters()
-            //    {
-            //        ValidateIssuer = true,
-            //        ValidateAudience = true,
-            //        ValidAudience = configuration["JWTAuth:ValidIssuerURL"],
-            //        ValidIssuer = configuration["JWTAuth:ValidIssuerURL"],
-            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWTAuth:SecretKey"]))
-            //    };
-            //});
-
+            
 
             // Add services to the container.
 
@@ -79,6 +70,16 @@ namespace Amostra.API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+            builder.Services.AddCors(opt =>
+            {
+                opt.AddPolicy(name: MyAllowSpecificOrigins, builder =>
+                {
+                    builder.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
 
 
             builder.Services.AddSwaggerGen(setup =>
@@ -115,6 +116,8 @@ namespace Amostra.API
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors(MyAllowSpecificOrigins);
             app.UseAuthentication();
             app.UseAuthorization();
 

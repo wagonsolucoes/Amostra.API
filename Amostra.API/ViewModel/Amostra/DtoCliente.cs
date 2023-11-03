@@ -1,31 +1,11 @@
-﻿namespace Amostra.API.ViewModel.Amostra
+﻿using Amostra.API.Models.Amostra;
+
+namespace Amostra.API.ViewModel.Amostra
 {
     public class DtoCliente
     {
-        public string CpfCnpj { get; set; } = null!;
-
-        public string Nome { get; set; } = null!;
-
-        public string Cep { get; set; } = null!;
-
-        public string Logradouro { get; set; } = null!;
-
-        public string Numero { get; set; } = null!;
-
-        public string? Complemento { get; set; }
-
-        public string Bairro { get; set; } = null!;
-
-        public string Localidade { get; set; } = null!;
-
-        public string Uf { get; set; } = null!;
-
-        public string Email { get; set; } = null!;
-
-        public string Telefone { get; set; } = null!;
-
-        public bool? Ativo { get; set; }
-
-        public bool? Deleted { get; set; }
+        public int ttRows { get; set; }
+        public List<Cliente> lst  { get; set; }
+        public string msgEx {  get; set; }
     }
 }

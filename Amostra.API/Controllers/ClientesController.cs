@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Amostra.API.Data.Amostra;
 using Amostra.API.Models.Amostra;
+using Amostra.API.ViewModel.Amostra;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,80 +26,92 @@ namespace MVC.Controllers
         // GET: api/Clientes
         [Authorize(Roles = "Administrator,Cliente")]
         [HttpGet("{Page}/{Rows}/{ValFilter}/{ColOrder}/{ColDirectrion}")]
-        public async Task<ActionResult<IEnumerable<Cliente>>> GetClientes(int Page, int Rows, string? ValFilter, string ColOrder, string ColDirectrion)
+        public async Task<ActionResult<DtoCliente>> GetClientes(int Page, int Rows, string? ValFilter, string ColOrder, string ColDirectrion)
         {
-            if (_context.Clientes == null)
+            DtoCliente dto = new DtoCliente();
+            try
             {
-                return NotFound();
-            }
 
-            IQueryable<Cliente> resultado = _context.Clientes;
-            int Pula = 0;
-            if(Page > 1)
-            {
-                Pula = (Page - 1) * Rows;
-            }
-            resultado = resultado.Skip(Pula);
-            resultado = resultado.Take(Rows);
+                if (_context.Clientes == null)
+                {
+                    return NotFound();
+                }
 
-            #region WHERE
-            resultado = resultado.Where(p => p.Ativo == true);
-            resultado = resultado.Where(p => p.Deleted == false);
-            if (!string.IsNullOrEmpty(ValFilter))
-            {
-                resultado = resultado.Where(p => p.Nome.Contains(ValFilter));
-            }
-            #endregion
+                var tt = await _context.Clientes.ToListAsync();
+                dto.ttRows = tt.Count;
 
-            #region ORDER BY
-            if (ColOrder == "Nome" || string.IsNullOrEmpty(ColOrder))
-            {
-                if (ColDirectrion == "" || ColDirectrion == "ASC")
+                IQueryable<Cliente> resultado = _context.Clientes;
+                int Pula = 0;
+                if (Page > 1)
                 {
-                    resultado = resultado.OrderBy(p => p.Nome);
+                    Pula = (Page - 1) * Rows;
                 }
-                else
-                {
-                    resultado = resultado.OrderByDescending(p => p.Nome);
-                }
-            }
-            if (ColOrder == "Bairro")
-            {
-                if (ColDirectrion == "" || ColDirectrion == "ASC")
-                {
-                    resultado = resultado.OrderBy(p => p.Bairro);
-                }
-                else
-                {
-                    resultado = resultado.OrderByDescending(p => p.Bairro);
-                }
-            }
-            if (ColOrder == "Localidade")
-            {
-                if (ColDirectrion == "" || ColDirectrion == "ASC")
-                {
-                    resultado = resultado.OrderBy(p => p.Localidade);
-                }
-                else
-                {
-                    resultado = resultado.OrderByDescending(p => p.Localidade);
-                }
-            }
-            if (ColOrder == "Uf")
-            {
-                if (ColDirectrion == "" || ColDirectrion == "ASC")
-                {
-                    resultado = resultado.OrderBy(p => p.Uf);
-                }
-                else
-                {
-                    resultado = resultado.OrderByDescending(p => p.Uf);
-                }
-            }
-            #endregion
+                resultado = resultado.Skip(Pula);
+                resultado = resultado.Take(Rows);
 
-            List<Cliente> lst = resultado.ToList();
-            return lst;
+                #region WHERE
+                resultado = resultado.Where(p => p.Ativo == true);
+                resultado = resultado.Where(p => p.Deleted == false);
+                if (!string.IsNullOrEmpty(ValFilter))
+                {
+                    resultado = resultado.Where(p => p.Nome.Contains(ValFilter));
+                }
+                #endregion
+
+                #region ORDER BY
+                if (ColOrder == "Nome" || string.IsNullOrEmpty(ColOrder))
+                {
+                    if (ColDirectrion == "" || ColDirectrion == "ASC")
+                    {
+                        resultado = resultado.OrderBy(p => p.Nome);
+                    }
+                    else
+                    {
+                        resultado = resultado.OrderByDescending(p => p.Nome);
+                    }
+                }
+                if (ColOrder == "Bairro")
+                {
+                    if (ColDirectrion == "" || ColDirectrion == "ASC")
+                    {
+                        resultado = resultado.OrderBy(p => p.Bairro);
+                    }
+                    else
+                    {
+                        resultado = resultado.OrderByDescending(p => p.Bairro);
+                    }
+                }
+                if (ColOrder == "Localidade")
+                {
+                    if (ColDirectrion == "" || ColDirectrion == "ASC")
+                    {
+                        resultado = resultado.OrderBy(p => p.Localidade);
+                    }
+                    else
+                    {
+                        resultado = resultado.OrderByDescending(p => p.Localidade);
+                    }
+                }
+                if (ColOrder == "Uf")
+                {
+                    if (ColDirectrion == "" || ColDirectrion == "ASC")
+                    {
+                        resultado = resultado.OrderBy(p => p.Uf);
+                    }
+                    else
+                    {
+                        resultado = resultado.OrderByDescending(p => p.Uf);
+                    }
+                }
+                #endregion
+
+                dto.lst = resultado.ToList();
+            }
+            catch(Exception ex)
+            {
+                dto.msgEx = ex.Message;
+            }
+            return dto;
         }
 
         // GET: api/Clientes/5

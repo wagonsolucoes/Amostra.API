@@ -24,14 +24,81 @@ namespace MVC.Controllers
 
         // GET: api/Clientes
         [Authorize(Roles = "Administrator,Cliente")]
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cliente>>> GetClientes()
+        [HttpGet("{Page}/{Rows}/{ValFilter}/{ColOrder}/{ColDirectrion}")]
+        public async Task<ActionResult<IEnumerable<Cliente>>> GetClientes(int Page, int Rows, string? ValFilter, string ColOrder, string ColDirectrion)
         {
-          if (_context.Clientes == null)
-          {
-              return NotFound();
-          }
-            return await _context.Clientes.ToListAsync();
+            if (_context.Clientes == null)
+            {
+                return NotFound();
+            }
+
+            IQueryable<Cliente> resultado = _context.Clientes;
+            int Pula = 0;
+            if(Page > 1)
+            {
+                Pula = (Page - 1) * Rows;
+            }
+            resultado = resultado.Skip(Pula);
+            resultado = resultado.Take(Rows);
+
+            #region WHERE
+            resultado = resultado.Where(p => p.Ativo == true);
+            resultado = resultado.Where(p => p.Deleted == false);
+            if (!string.IsNullOrEmpty(ValFilter))
+            {
+                resultado = resultado.Where(p => p.Nome.Contains(ValFilter));
+            }
+            #endregion
+
+            #region ORDER BY
+            if (ColOrder == "Nome" || string.IsNullOrEmpty(ColOrder))
+            {
+                if (ColDirectrion == "" || ColDirectrion == "ASC")
+                {
+                    resultado = resultado.OrderBy(p => p.Nome);
+                }
+                else
+                {
+                    resultado = resultado.OrderByDescending(p => p.Nome);
+                }
+            }
+            if (ColOrder == "Bairro")
+            {
+                if (ColDirectrion == "" || ColDirectrion == "ASC")
+                {
+                    resultado = resultado.OrderBy(p => p.Bairro);
+                }
+                else
+                {
+                    resultado = resultado.OrderByDescending(p => p.Bairro);
+                }
+            }
+            if (ColOrder == "Localidade")
+            {
+                if (ColDirectrion == "" || ColDirectrion == "ASC")
+                {
+                    resultado = resultado.OrderBy(p => p.Localidade);
+                }
+                else
+                {
+                    resultado = resultado.OrderByDescending(p => p.Localidade);
+                }
+            }
+            if (ColOrder == "Uf")
+            {
+                if (ColDirectrion == "" || ColDirectrion == "ASC")
+                {
+                    resultado = resultado.OrderBy(p => p.Uf);
+                }
+                else
+                {
+                    resultado = resultado.OrderByDescending(p => p.Uf);
+                }
+            }
+            #endregion
+
+            List<Cliente> lst = resultado.ToList();
+            return lst;
         }
 
         // GET: api/Clientes/5
@@ -39,10 +106,10 @@ namespace MVC.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Cliente>> GetCliente(string id)
         {
-          if (_context.Clientes == null)
-          {
-              return NotFound();
-          }
+            if (_context.Clientes == null)
+            {
+                return NotFound();
+            }
             var cliente = await _context.Clientes.FindAsync(id);
 
             if (cliente == null)
@@ -91,10 +158,10 @@ namespace MVC.Controllers
         [HttpPost]
         public async Task<ActionResult<Cliente>> PostCliente(Cliente cliente)
         {
-          if (_context.Clientes == null)
-          {
-              return Problem("Entity set 'AmostraContext.Clientes'  is null.");
-          }
+            if (_context.Clientes == null)
+            {
+                return Problem("Entity set 'AmostraContext.Clientes'  is null.");
+            }
             _context.Clientes.Add(cliente);
             try
             {

@@ -6,19 +6,30 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Linq;
 using System.Text;
 using Wagon.API;
-
 namespace Amostra.API
 {
     public class Program
     {
+        //private static void ConfigureAutoMapper(IServiceCollection services)
+        //{
+        //    var mapperConfig = AutoMapperConfigurator.Configure();
+        //    var mapper = mapperConfig.CreateMapper();
+        //    services.AddSingleton(x => mapper);
+        //    services.AddTransient<IAutoMapper, AutoMapperAdapter>();
+        //}
         public static void Main(string[] args)
         {
             IServiceCollection services = new ServiceCollection();
 
+
+
             var builder = WebApplication.CreateBuilder(args);
-            builder.Services.AddSingleton(MapperConfig.InitializeAutomapper());
+            //builder.Services.AddSingleton(MapperConfig.InitializeAutomapper());
+
+
             ConfigurationManager configuration = builder.Configuration;
 
             //builder.Services.AddDbContext<WagonMailContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("WagonMail")));
@@ -67,6 +78,10 @@ namespace Amostra.API
             // Add services to the container.
 
             builder.Services.AddControllers();
+
+            //builder.Services.AddAutoMapper(typeof(ConfigurationMapping));
+            builder.Services.AddScoped<AmostraContext>();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

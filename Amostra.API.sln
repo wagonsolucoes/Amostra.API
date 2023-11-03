@@ -5,8 +5,6 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amostra.API", "Amostra.API\Amostra.API.csproj", "{68E037CE-9A96-4C93-92A4-8AB9846E02A3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amostra.MVC", "Amostra.MVC\Amostra.MVC.csproj", "{F1BDB142-729B-4F8A-B969-6D138561698C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{68E037CE-9A96-4C93-92A4-8AB9846E02A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68E037CE-9A96-4C93-92A4-8AB9846E02A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68E037CE-9A96-4C93-92A4-8AB9846E02A3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F1BDB142-729B-4F8A-B969-6D138561698C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F1BDB142-729B-4F8A-B969-6D138561698C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F1BDB142-729B-4F8A-B969-6D138561698C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F1BDB142-729B-4F8A-B969-6D138561698C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

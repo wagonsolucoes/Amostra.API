@@ -26,5 +26,4 @@ namespace Amostra.API.ViewModel.Amostra
 
         public string Telefone { get; set; }
     }
-    }
 }

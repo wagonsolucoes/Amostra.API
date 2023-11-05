@@ -1,1 +1,2 @@
 ﻿Programado com .NET CORE 7
+Utilizar migration para restaurar a base de dados, existe Amostra e WagonLogin para o Identity Bearer Authentication.

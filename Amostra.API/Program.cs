@@ -13,21 +13,11 @@ namespace Amostra.API
 {
     public class Program
     {
-        //private static void ConfigureAutoMapper(IServiceCollection services)
-        //{
-        //    var mapperConfig = AutoMapperConfigurator.Configure();
-        //    var mapper = mapperConfig.CreateMapper();
-        //    services.AddSingleton(x => mapper);
-        //    services.AddTransient<IAutoMapper, AutoMapperAdapter>();
-        //}
         public static void Main(string[] args)
         {
             IServiceCollection services = new ServiceCollection();
 
-
-
             var builder = WebApplication.CreateBuilder(args);
-            //builder.Services.AddSingleton(MapperConfig.InitializeAutomapper());
 
 
             ConfigurationManager configuration = builder.Configuration;
@@ -85,6 +75,9 @@ namespace Amostra.API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddAutoMapper(typeof(MapperConfig).Assembly);
+
+
             var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
             builder.Services.AddCors(opt =>
             {

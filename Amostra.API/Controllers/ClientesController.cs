@@ -33,19 +33,17 @@ namespace MVC.Controllers
         {
             List<ClienteDto> dto = new List<ClienteDto>();
             ClienteLst retorno = new ClienteLst();
+            IQueryable<Cliente> resultado = _context.Clientes;
+            List<Cliente> tt = new List<Cliente>();
+            int Pula = 0;
             try
             {
-
                 if (_context.Clientes == null)
                 {
                     return NotFound();
                 }
-
-                var tt = await _context.Clientes.ToListAsync();
-                retorno.ttRows = tt.Count;
-
-                IQueryable<Cliente> resultado = _context.Clientes;
-                int Pula = 0;
+                tt = await _context.Clientes.ToListAsync();
+                retorno.ttRows = tt.Count;                
                 if (Page > 1)
                 {
                     Pula = (Page - 1) * Rows;
@@ -122,17 +120,25 @@ namespace MVC.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCliente(string id)
         {
-            if (_context.Clientes == null)
+            ClienteDto retorno = new ClienteDto();
+            try
             {
-                return NotFound();
+                if (_context.Clientes == null)
+                {
+                    return NotFound();
+                }
+                var cliente = await _context.Clientes.FindAsync(id);
+                if (cliente == null)
+                {
+                    return NotFound();
+                }
+                retorno = _mapper.Map<ClienteDto>(cliente);                
             }
-            var cliente = await _context.Clientes.FindAsync(id);
-
-            if (cliente == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                return BadRequest(ex.Message);
             }
-            return Ok(_mapper.Map<ClienteDto>(cliente));
+            return Ok(retorno);
         }
 
         [Authorize(Roles = "Administrator,Cliente")]
@@ -140,30 +146,21 @@ namespace MVC.Controllers
         public async Task<IActionResult> PutCliente(ClienteVm model)
         {
             Cliente cliente = new Cliente();
-            var validator = new ClienteValidator();
-            var answerValidation = validator.Validate(model);
-            if (!answerValidation.IsValid)
-            {
-                return BadRequest(answerValidation.Errors);
-            }
-            _context.Entry(_mapper.Map<Cliente>(model)).State = EntityState.Modified;
-
             try
             {
+                var validator = new ClienteValidator();
+                var answerValidation = validator.Validate(model);
+                if (!answerValidation.IsValid)
+                {
+                    return BadRequest(answerValidation.Errors);
+                }
+                _context.Entry(_mapper.Map<Cliente>(model)).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException ex)
+            catch (Exception ex)
             {
-                if (!ClienteExists(cliente.CpfCnpj))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    return BadRequest(ex.Message);
-                }
+                return BadRequest(ex.Message);
             }
-
             return Ok();
         }
 
@@ -187,16 +184,9 @@ namespace MVC.Controllers
                 _context.Clientes.Add(_mapper.Map<Cliente>(model));
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException)
+            catch (Exception ex)
             {
-                if (ClienteExists(cliente.CpfCnpj))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest(ex.Message);
             }
             return Ok();
         }
@@ -205,19 +195,24 @@ namespace MVC.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCliente(string id)
         {
-            if (_context.Clientes == null)
+            try
             {
-                return NotFound();
+                if (_context.Clientes == null)
+                {
+                    return NotFound();
+                }
+                var cliente = await _context.Clientes.FindAsync(id);
+                if (cliente == null)
+                {
+                    return NotFound();
+                }
+                _context.Clientes.Remove(cliente);
+                await _context.SaveChangesAsync();
             }
-            var cliente = await _context.Clientes.FindAsync(id);
-            if (cliente == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                return BadRequest(ex.Message);
             }
-
-            _context.Clientes.Remove(cliente);
-            await _context.SaveChangesAsync();
-
             return NoContent();
         }
 

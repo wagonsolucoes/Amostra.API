@@ -28,9 +28,13 @@ namespace MVC.Controllers
         }
 
         [Authorize(Roles = "Administrator,Cliente")]
-        [HttpGet("{Page}/{Rows}/{ValFilter}/{ColOrder}/{ColDirectrion}")]
-        public async Task<IActionResult> GetClientes(int Page, int Rows, string? ValFilter, string ColOrder, string ColDirectrion)
+        [HttpGet("{Page}/{Rows}/{ColOrder}/{ColDirectrion}/{ValFilter}")]
+        public async Task<IActionResult> GetClientes(int Page, int Rows, string ColOrder, string ColDirectrion, string? ValFilter)
         {
+            if(ValFilter == " ")
+            {
+                ValFilter = "";
+            }
             List<ClienteDto> dto = new List<ClienteDto>();
             ClienteLst retorno = new ClienteLst();
             IQueryable<Cliente> resultado = _context.Clientes;
@@ -38,10 +42,6 @@ namespace MVC.Controllers
             int Pula = 0;
             try
             {
-                if (_context.Clientes == null)
-                {
-                    return NotFound();
-                }
                 tt = await _context.Clientes.ToListAsync();
                 retorno.ttRows = tt.Count;                
                 if (Page > 1)
@@ -106,8 +106,8 @@ namespace MVC.Controllers
                     }
                 }
                 #endregion
-
-                retorno.lst = _mapper.Map<List<ClienteDto>>(resultado);
+                var lst = resultado.ToList();
+                retorno.lst = _mapper.Map<List<ClienteDto>>(lst);
             }
             catch(Exception ex)
             {
@@ -154,7 +154,9 @@ namespace MVC.Controllers
                 {
                     return BadRequest(answerValidation.Errors);
                 }
-                _context.Entry(_mapper.Map<Cliente>(model)).State = EntityState.Modified;
+                cliente = _mapper.Map<Cliente>(model);
+                cliente.Deleted = false;
+                _context.Entry(cliente).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -181,7 +183,9 @@ namespace MVC.Controllers
                 {
                     return BadRequest(answerValidation.Errors);
                 }
-                _context.Clientes.Add(_mapper.Map<Cliente>(model));
+                cliente = _mapper.Map<Cliente>(model);
+                cliente.Deleted = false;
+                _context.Clientes.Add(cliente);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

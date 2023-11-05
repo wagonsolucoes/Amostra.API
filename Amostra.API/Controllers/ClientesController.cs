@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Amostra.API.ViewModel.Amostra.Validation;
 using AutoMapper;
 
 namespace MVC.Controllers
@@ -28,13 +27,12 @@ namespace MVC.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/Clientes
         [Authorize(Roles = "Administrator,Cliente")]
         [HttpGet("{Page}/{Rows}/{ValFilter}/{ColOrder}/{ColDirectrion}")]
         public async Task<IActionResult> GetClientes(int Page, int Rows, string? ValFilter, string ColOrder, string ColDirectrion)
         {
-            List<DtoCliente> dto = new List<DtoCliente>();
-            ListagemCliente retorno = new ListagemCliente();
+            List<ClienteDto> dto = new List<ClienteDto>();
+            ClienteLst retorno = new ClienteLst();
             try
             {
 
@@ -111,7 +109,7 @@ namespace MVC.Controllers
                 }
                 #endregion
 
-                retorno.lst = _mapper.Map<List<DtoCliente>>(resultado);
+                retorno.lst = _mapper.Map<List<ClienteDto>>(resultado);
             }
             catch(Exception ex)
             {
@@ -120,7 +118,6 @@ namespace MVC.Controllers
             return Ok(retorno);
         }
 
-        // GET: api/Clientes/5
         [Authorize(Roles = "Administrator,Cliente")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCliente(string id)
@@ -135,14 +132,12 @@ namespace MVC.Controllers
             {
                 return NotFound();
             }
-            return Ok(_mapper.Map<DtoCliente>(cliente));
+            return Ok(_mapper.Map<ClienteDto>(cliente));
         }
 
-        // PUT: api/Clientes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize(Roles = "Administrator,Cliente")]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCliente(VMCliente model)
+        [HttpPut]
+        public async Task<IActionResult> PutCliente(ClienteVm model)
         {
             Cliente cliente = new Cliente();
             var validator = new ClienteValidator();
@@ -172,11 +167,9 @@ namespace MVC.Controllers
             return Ok();
         }
 
-        // POST: api/Clientes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize(Roles = "Administrator,Cliente")]
         [HttpPost]
-        public async Task<IActionResult> PostCliente(VMCliente model)
+        public async Task<IActionResult> PostCliente(ClienteVm model)
         {
             Cliente cliente = new Cliente();
             try
@@ -208,7 +201,6 @@ namespace MVC.Controllers
             return Ok();
         }
 
-        // DELETE: api/Clientes/5
         [Authorize(Roles = "Administrator")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCliente(string id)

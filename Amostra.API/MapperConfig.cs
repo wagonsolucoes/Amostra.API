@@ -10,9 +10,9 @@ namespace Wagon.API
         public MapperConfig()
         {
             #region Cliente, DtoCliente
-            CreateMap<Cliente, DtoCliente>()
+            CreateMap<Cliente, ClienteDto>()
                 .ForMember(
-                    dest => dest.CpfCnpj,
+                    dest => dest.Documento,
                     opt => opt.MapFrom(src => $"{src.CpfCnpj}")
                 )
                 .ForMember(
@@ -24,7 +24,7 @@ namespace Wagon.API
                     opt => opt.MapFrom(src => $"{src.Cep}")
                 )
                 .ForMember(
-                    dest => dest.Logradouro,
+                    dest => dest.Endereco,
                     opt => opt.MapFrom(src => $"{src.Logradouro}")
                 )
                 .ForMember(
@@ -40,7 +40,7 @@ namespace Wagon.API
                     opt => opt.MapFrom(src => $"{src.Bairro}")
                 )
                 .ForMember(
-                    dest => dest.Localidade,
+                    dest => dest.Municipio,
                     opt => opt.MapFrom(src => $"{src.Localidade}")
                 )
                 .ForMember(
@@ -54,22 +54,14 @@ namespace Wagon.API
                 .ForMember(
                     dest => dest.Telefone,
                     opt => opt.MapFrom(src => $"{src.Telefone}")
-                )
-                .ForMember(
-                    dest => dest.Ativo,
-                    opt => opt.MapFrom(src => $"{src.Ativo}")
-                )
-                .ForMember(
-                    dest => dest.Deleted,
-                    opt => opt.MapFrom(src => $"{src.Deleted}")
                 )
                 .ReverseMap();
             #endregion
 
             #region Cliente, VMCliente
-            CreateMap<Cliente, VMCliente>()
+            CreateMap<Cliente, ClienteVm>()
                 .ForMember(
-                    dest => dest.CpfCnpj,
+                    dest => dest.Documento,
                     opt => opt.MapFrom(src => $"{src.CpfCnpj}")
                 )
                 .ForMember(
@@ -81,7 +73,7 @@ namespace Wagon.API
                     opt => opt.MapFrom(src => $"{src.Cep}")
                 )
                 .ForMember(
-                    dest => dest.Logradouro,
+                    dest => dest.Endereco,
                     opt => opt.MapFrom(src => $"{src.Logradouro}")
                 )
                 .ForMember(
@@ -97,7 +89,7 @@ namespace Wagon.API
                     opt => opt.MapFrom(src => $"{src.Bairro}")
                 )
                 .ForMember(
-                    dest => dest.Localidade,
+                    dest => dest.Municipio,
                     opt => opt.MapFrom(src => $"{src.Localidade}")
                 )
                 .ForMember(
@@ -111,23 +103,15 @@ namespace Wagon.API
                 .ForMember(
                     dest => dest.Telefone,
                     opt => opt.MapFrom(src => $"{src.Telefone}")
-                )
-                .ForMember(
-                    dest => dest.Ativo,
-                    opt => opt.MapFrom(src => $"{src.Ativo}")
-                )
-                .ForMember(
-                    dest => dest.Deleted,
-                    opt => opt.MapFrom(src => $"{src.Deleted}")
                 )
                 .ReverseMap();
             #endregion
 
             #region VMCliente, Cliente
-            CreateMap<VMCliente, Cliente>()
+            CreateMap<ClienteVm, Cliente>()
                 .ForMember(
                     dest => dest.CpfCnpj,
-                    opt => opt.MapFrom(src => $"{src.CpfCnpj}")
+                    opt => opt.MapFrom(src => $"{src.Documento}")
                 )
                 .ForMember(
                     dest => dest.Nome,
@@ -139,7 +123,7 @@ namespace Wagon.API
                 )
                 .ForMember(
                     dest => dest.Logradouro,
-                    opt => opt.MapFrom(src => $"{src.Logradouro}")
+                    opt => opt.MapFrom(src => $"{src.Endereco}")
                 )
                 .ForMember(
                     dest => dest.Numero,
@@ -155,7 +139,7 @@ namespace Wagon.API
                 )
                 .ForMember(
                     dest => dest.Localidade,
-                    opt => opt.MapFrom(src => $"{src.Localidade}")
+                    opt => opt.MapFrom(src => $"{src.Municipio}")
                 )
                 .ForMember(
                     dest => dest.Uf,
@@ -168,23 +152,15 @@ namespace Wagon.API
                 .ForMember(
                     dest => dest.Telefone,
                     opt => opt.MapFrom(src => $"{src.Telefone}")
-                )
-                .ForMember(
-                    dest => dest.Ativo,
-                    opt => opt.MapFrom(src => $"{src.Ativo}")
-                )
-                .ForMember(
-                    dest => dest.Deleted,
-                    opt => opt.MapFrom(src => $"{src.Deleted}")
                 )
                 .ReverseMap();
             #endregion
 
             #region DtoCliente, Cliente
-            CreateMap<DtoCliente, Cliente>()
+            CreateMap<ClienteDto, Cliente>()
                 .ForMember(
                     dest => dest.CpfCnpj,
-                    opt => opt.MapFrom(src => $"{src.CpfCnpj}")
+                    opt => opt.MapFrom(src => $"{src.Documento}")
                 )
                 .ForMember(
                     dest => dest.Nome,
@@ -196,7 +172,7 @@ namespace Wagon.API
                 )
                 .ForMember(
                     dest => dest.Logradouro,
-                    opt => opt.MapFrom(src => $"{src.Logradouro}")
+                    opt => opt.MapFrom(src => $"{src.Endereco}")
                 )
                 .ForMember(
                     dest => dest.Numero,
@@ -212,7 +188,7 @@ namespace Wagon.API
                 )
                 .ForMember(
                     dest => dest.Localidade,
-                    opt => opt.MapFrom(src => $"{src.Localidade}")
+                    opt => opt.MapFrom(src => $"{src.Municipio}")
                 )
                 .ForMember(
                     dest => dest.Uf,
@@ -226,21 +202,8 @@ namespace Wagon.API
                     dest => dest.Telefone,
                     opt => opt.MapFrom(src => $"{src.Telefone}")
                 )
-                .ForMember(
-                    dest => dest.Ativo,
-                    opt => opt.MapFrom(src => $"{src.Ativo}")
-                )
-                .ForMember(
-                    dest => dest.Deleted,
-                    opt => opt.MapFrom(src => $"{src.Deleted}")
-                )
                 .ReverseMap();
             #endregion
-
-            //CreateMap<List<Cliente>, List<DtoCliente>>().ReverseMap();
-            //CreateMap<List<Cliente>, List<VMCliente>>().ReverseMap();
-            //CreateMap<List<DtoCliente>, List<Cliente>>().ReverseMap();
-            //CreateMap<List<VMCliente>, List<Cliente>>().ReverseMap();
         }
     }
 }

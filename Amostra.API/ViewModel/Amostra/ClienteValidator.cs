@@ -1,20 +1,20 @@
 ﻿using FluentValidation;
 using System.Text.RegularExpressions;
 
-namespace Amostra.API.ViewModel.Amostra.Validation
+namespace Amostra.API.ViewModel.Amostra
 {
-    public class ClienteValidator : AbstractValidator<VMCliente>
+    public class ClienteValidator : AbstractValidator<ClienteVm>
     {
         public ClienteValidator()
         {
-            RuleFor(x => x.CpfCnpj).Must(x => (x.Length == 10 || x.Length == 11 && IsCpf(x)) || (x.Length == 14 && IsCnpj(x))).WithMessage("Documento inválido.");
+            RuleFor(x => x.Documento).Must(x => x.Length == 10 || x.Length == 11 && IsCpf(x) || x.Length == 14 && IsCnpj(x)).WithMessage("Documento inválido.");
             RuleFor(x => x.Nome).Must(x => x.Length <= 250).WithMessage("Nome, comprimento máximo de 250 caracteres.");
             RuleFor(x => x.Cep).Must(x => x.Length == 8).WithMessage("Cep, comprimento máximo de 8 caracteres.");
-            RuleFor(x => x.Logradouro).Must(x => x.Length <= 350).WithMessage("Logradouro, comprimento máximo de 350 caracteres.");
+            RuleFor(x => x.Endereco).Must(x => x.Length <= 350).WithMessage("Logradouro, comprimento máximo de 350 caracteres.");
             RuleFor(x => x.Numero).Must(x => x.Length <= 100).WithMessage("Número, comprimento máximo de 100 caracteres.");
             RuleFor(x => x.Complemento).Must(x => x.Length >= 0 && x.Length <= 250).WithMessage("Número, comprimento mínimo de 0 e máximo de 250 caracteres.");
             RuleFor(x => x.Bairro).Must(x => x.Length <= 250).WithMessage("Bairro, comprimento máximo de 250 caracteres.");
-            RuleFor(x => x.Localidade).Must(x => x.Length <= 250).WithMessage("Localidade, comprimento máximo de 250 caracteres.");
+            RuleFor(x => x.Municipio).Must(x => x.Length <= 250).WithMessage("Localidade, comprimento máximo de 250 caracteres.");
             RuleFor(x => x.Uf).Must(x => x.Length <= 250).WithMessage("Uf, comprimento máximo de 2 caracteres.");
             RuleFor(x => x.Email).Must(x => x.Length <= 350 && IsValidEmail(x)).WithMessage("Email inválido.");
             RuleFor(x => x.Telefone).Must(x => x.Length <= 250).WithMessage("Telefone, comprimento máximo de 2 caracteres.");
@@ -77,7 +77,7 @@ namespace Amostra.API.ViewModel.Amostra.Validation
             soma = 0;
             for (int i = 0; i < 12; i++)
                 soma += int.Parse(tempCnpj[i].ToString()) * multiplicador1[i];
-            resto = (soma % 11);
+            resto = soma % 11;
             if (resto < 2)
                 resto = 0;
             else
@@ -87,7 +87,7 @@ namespace Amostra.API.ViewModel.Amostra.Validation
             soma = 0;
             for (int i = 0; i < 13; i++)
                 soma += int.Parse(tempCnpj[i].ToString()) * multiplicador2[i];
-            resto = (soma % 11);
+            resto = soma % 11;
             if (resto < 2)
                 resto = 0;
             else

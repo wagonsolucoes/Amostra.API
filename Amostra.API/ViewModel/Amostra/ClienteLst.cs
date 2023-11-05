@@ -1,9 +1,9 @@
 ﻿namespace Amostra.API.ViewModel.Amostra
 {
-    public class ListagemCliente
+    public class ClienteLst
     {
         public int ttRows { get; set; }
-        public List<DtoCliente> lst { get; set; }
+        public List<ClienteDto> lst { get; set; }
         public string msgEx { get; set; }
     }
 }

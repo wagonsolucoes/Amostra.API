@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using Amostra.API.ViewModel;
+using RestSharp;
 
 namespace MVC.Controllers
 {
@@ -52,11 +54,19 @@ namespace MVC.Controllers
                 resultado = resultado.Take(Rows);
 
                 #region WHERE
-                resultado = resultado.Where(p => p.Ativo == true);
                 resultado = resultado.Where(p => p.Deleted == false);
                 if (!string.IsNullOrEmpty(ValFilter))
                 {
-                    resultado = resultado.Where(p => p.Nome.Contains(ValFilter));
+                    resultado = resultado.Where(p => 
+                        p.Nome.Contains(ValFilter) ||
+                        p.CpfCnpj.Contains(ValFilter) ||
+                        p.Bairro.Contains(ValFilter) ||
+                        p.Logradouro.Contains(ValFilter) ||
+                        p.Localidade.Contains(ValFilter) ||
+                        p.Uf.Contains(ValFilter) ||
+                        p.Nome.Contains(ValFilter) ||
+                        p.Telefone.Contains(ValFilter)
+                    );
                 }
                 #endregion
 
@@ -185,6 +195,7 @@ namespace MVC.Controllers
                 }
                 cliente = _mapper.Map<Cliente>(model);
                 cliente.Deleted = false;
+                cliente.Ativo = true;
                 _context.Clientes.Add(cliente);
                 await _context.SaveChangesAsync();
             }
@@ -201,28 +212,42 @@ namespace MVC.Controllers
         {
             try
             {
-                if (_context.Clientes == null)
-                {
-                    return NotFound();
-                }
                 var cliente = await _context.Clientes.FindAsync(id);
-                if (cliente == null)
+                if (cliente != null)
                 {
-                    return NotFound();
+                    _context.Clientes.Remove(cliente);
+                    await _context.SaveChangesAsync();
                 }
-                _context.Clientes.Remove(cliente);
-                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-            return NoContent();
+            return Ok();
         }
 
         private bool ClienteExists(string id)
         {
             return (_context.Clientes?.Any(e => e.CpfCnpj == id)).GetValueOrDefault();
+        }
+
+        [Route("Cliente/ViaCep/{cep}")]
+        [HttpGet]
+        public async Task<Viacep> ViaCep(string cep)
+        {
+            Viacep? vc = new Viacep();
+            try
+            {
+                string url = "https://viacep.com.br";
+                var client = new RestClient(url);
+                var request = new RestRequest("/ws/" + cep.Replace("-", "") + "/json/", Method.Get);
+                vc = client.Execute<Viacep>(request).Data;
+            }
+            catch (Exception ex)
+            {
+                vc = new Viacep();
+            }
+            return vc;
         }
     }
 }

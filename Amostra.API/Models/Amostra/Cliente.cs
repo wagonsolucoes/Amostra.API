@@ -27,7 +27,13 @@ public partial class Cliente
 
     public string Telefone { get; set; } = null!;
 
+    public DateTime? Nascimento { get; set; }
+
+    public int? Idade { get; set; }
+
     public bool? Ativo { get; set; }
 
     public bool? Deleted { get; set; }
+
+    public virtual ICollection<Emprestado> Emprestados { get; set; } = new List<Emprestado>();
 }

@@ -19,13 +19,13 @@ namespace MVC.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ClientesController : ControllerBase
+    public class LivroController : ControllerBase
     {
         private readonly AmostraContext _context;
         private readonly IMapper _mapper;
         private IUnit _unit;
 
-        public ClientesController(AmostraContext context, IMapper mapper, IUnit unit)
+        public LivroController(AmostraContext context, IMapper mapper, IUnit unit)
         {
             _context = context;
             _mapper = mapper;
@@ -38,12 +38,12 @@ namespace MVC.Controllers
         {
             try
             {
-                var cliente = _unit.Cliente.GetValueById(id);
-                if (cliente == null)
+                var Livro = _unit.Livro.GetValueById(id);
+                if (Livro == null)
                 {
                     return NotFound();
                 }
-                var dto = _mapper.Map<ClienteDto>(cliente);
+                var dto = _mapper.Map<LivroDto>(Livro);
                 return Ok(dto);
             }
             catch (Exception ex)
@@ -53,14 +53,14 @@ namespace MVC.Controllers
         }
 
         [Route("Filtro")]
-        [Authorize(Roles = "Administrator,Cliente")]
+        [Authorize(Roles = "Administrator,Livro")]
         [HttpGet]
         public async Task<IActionResult> Filtro(int IniciaEm, int QtdLinhas, string TermoBusca = "", string ColunaOrdenar = "Nome", string Direcao = "ASC")
         {
-            ClienteLst retorno = new ClienteLst();
+            LivroLst retorno = new LivroLst();
             try
             {
-                return Ok(_unit.Cliente.Filtrar(IniciaEm, QtdLinhas, TermoBusca, ColunaOrdenar, Direcao));
+                return Ok(_unit.Livro.Filtrar(IniciaEm, QtdLinhas, TermoBusca, ColunaOrdenar, Direcao));
             }
             catch (Exception ex)
             {
@@ -68,20 +68,22 @@ namespace MVC.Controllers
             }            
         }
 
-        [Route("Cliente/Add")]
-        [Authorize(Roles = "Administrator,Cliente")]
+        [Route("Livro/Add")]
+        [Authorize(Roles = "Administrator,Livro")]
         [HttpPost]
-        public async Task<IActionResult> Add(ClienteVm model)
+        public async Task<IActionResult> Add(LivroVm model)
         {
             try
             {
-                var validator = new ClienteValidator();
+                model.Id = Guid.NewGuid();
+                model.Ativo = true;
+                var validator = new LivroValidator();
                 var answerValidation = validator.Validate(model);
                 if (!answerValidation.IsValid)
                 {
                     return BadRequest(answerValidation.Errors);
                 }
-                _unit.Cliente.Add(_mapper.Map<Cliente>(model));
+                _unit.Livro.Add(_mapper.Map<Livro>(model));
                 _unit.Salvar();
                 _unit.Dispose();
             }
@@ -92,22 +94,22 @@ namespace MVC.Controllers
             return Ok();
         }
 
-        [Route("Cliente/Update")]
-        [Authorize(Roles = "Administrator,Cliente")]
+        [Route("Livro/Update")]
+        [Authorize(Roles = "Administrator,Livro")]
         [HttpPost]
-        public async Task<IActionResult> Update(ClienteVm model)
+        public async Task<IActionResult> Update(LivroVm model)
         {
-            List<Cliente> clientes = new List<Cliente>();
-            Cliente cliente = new Cliente();
+            List<Livro> Livros = new List<Livro>();
+            Livro Livro = new Livro();
             try
             {
-                var validator = new ClienteValidator();
+                var validator = new LivroValidator();
                 var answerValidation = validator.Validate(model);
                 if (!answerValidation.IsValid)
                 {
                     return BadRequest(answerValidation.Errors);
                 }
-                _unit.Cliente.Update(_mapper.Map<Cliente>(model));
+                _unit.Livro.Update(_mapper.Map<Livro>(model));
                 _unit.Salvar();
                 _unit.Dispose();
             }
@@ -115,24 +117,24 @@ namespace MVC.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            return Ok(clientes);
+            return Ok(Livros);
         }
 
-        [Route("Cliente/Delete")]
-        [Authorize(Roles = "Administrator,Cliente")]
+        [Route("Livro/Delete")]
+        [Authorize(Roles = "Administrator,Livro")]
         [HttpDelete]
-        public async Task<IActionResult> Delete(ClienteVm model)
+        public async Task<IActionResult> Delete(LivroVm model)
         {
-            Cliente cliente = new Cliente();
+            Livro Livro = new Livro();
             try
             {
-                var validator = new ClienteValidator();
+                var validator = new LivroValidator();
                 var answerValidation = validator.Validate(model);
                 if (!answerValidation.IsValid)
                 {
                     return BadRequest(answerValidation.Errors);
                 }
-                _unit.Cliente.Delete(_mapper.Map<Cliente>(model));
+                _unit.Livro.Delete(_mapper.Map<Livro>(model));
                 _unit.Salvar();
                 _unit.Dispose();
             }
@@ -141,25 +143,6 @@ namespace MVC.Controllers
                 return BadRequest(ex.Message);
             }
             return Ok();
-        }
-
-        [Route("Cliente/ViaCep/{cep}")]
-        [HttpGet]
-        public async Task<Viacep> ViaCep(string cep)
-        {
-            Viacep? vc = new Viacep();
-            try
-            {
-                string url = "https://viacep.com.br";
-                var client = new RestClient(url);
-                var request = new RestRequest("/ws/" + cep.Replace("-", "") + "/json/", Method.Get);
-                vc = client.Execute<Viacep>(request).Data;
-            }
-            catch (Exception ex)
-            {
-                vc = new Viacep();
-            }
-            return vc;
         }
     }
 }

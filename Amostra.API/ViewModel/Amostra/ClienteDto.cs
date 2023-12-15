@@ -25,6 +25,8 @@ namespace Amostra.API.ViewModel.Amostra
         public string Email { get; set; }
 
         public string Telefone { get; set; }
-        public bool Ativo { get; set; }
+        public DateTime? Nascimento { get; set; }
+        public int? Idade { get; set; }
+        public bool? Ativo { get; set; }
     }
 }

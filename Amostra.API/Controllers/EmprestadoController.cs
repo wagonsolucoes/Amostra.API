@@ -19,13 +19,13 @@ namespace MVC.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ClientesController : ControllerBase
+    public class EmprestadoController : ControllerBase
     {
         private readonly AmostraContext _context;
         private readonly IMapper _mapper;
         private IUnit _unit;
 
-        public ClientesController(AmostraContext context, IMapper mapper, IUnit unit)
+        public EmprestadoController(AmostraContext context, IMapper mapper, IUnit unit)
         {
             _context = context;
             _mapper = mapper;
@@ -38,12 +38,12 @@ namespace MVC.Controllers
         {
             try
             {
-                var cliente = _unit.Cliente.GetValueById(id);
-                if (cliente == null)
+                var Emprestado = _unit.Emprestado.GetValueById(id);
+                if (Emprestado == null)
                 {
                     return NotFound();
                 }
-                var dto = _mapper.Map<ClienteDto>(cliente);
+                var dto = _mapper.Map<EmprestadoDto>(Emprestado);
                 return Ok(dto);
             }
             catch (Exception ex)
@@ -53,14 +53,14 @@ namespace MVC.Controllers
         }
 
         [Route("Filtro")]
-        [Authorize(Roles = "Administrator,Cliente")]
+        [Authorize(Roles = "Administrator,Emprestado")]
         [HttpGet]
-        public async Task<IActionResult> Filtro(int IniciaEm, int QtdLinhas, string TermoBusca = "", string ColunaOrdenar = "Nome", string Direcao = "ASC")
+        public async Task<IActionResult> Filtro(int IniciaEm, int QtdLinhas, string IdCliente, Guid IdLivro, string ColunaOrdenar = "Nome", string Direcao = "ASC")
         {
-            ClienteLst retorno = new ClienteLst();
+            EmprestadoLst retorno = new EmprestadoLst();
             try
             {
-                return Ok(_unit.Cliente.Filtrar(IniciaEm, QtdLinhas, TermoBusca, ColunaOrdenar, Direcao));
+                return Ok(_unit.Emprestado.Filtrar(IniciaEm, QtdLinhas, IdCliente, IdLivro, ColunaOrdenar, Direcao));
             }
             catch (Exception ex)
             {
@@ -68,20 +68,22 @@ namespace MVC.Controllers
             }            
         }
 
-        [Route("Cliente/Add")]
-        [Authorize(Roles = "Administrator,Cliente")]
+        [Route("Emprestado/Add")]
+        [Authorize(Roles = "Administrator,Emprestado")]
         [HttpPost]
-        public async Task<IActionResult> Add(ClienteVm model)
+        public async Task<IActionResult> Add(EmprestadoVm model)
         {
             try
             {
-                var validator = new ClienteValidator();
+                model.Id = Guid.NewGuid();
+                model.Ativo = true;
+                var validator = new EmprestadoValidator();
                 var answerValidation = validator.Validate(model);
                 if (!answerValidation.IsValid)
                 {
                     return BadRequest(answerValidation.Errors);
                 }
-                _unit.Cliente.Add(_mapper.Map<Cliente>(model));
+                _unit.Emprestado.Add(_mapper.Map<Emprestado>(model));
                 _unit.Salvar();
                 _unit.Dispose();
             }
@@ -92,22 +94,22 @@ namespace MVC.Controllers
             return Ok();
         }
 
-        [Route("Cliente/Update")]
-        [Authorize(Roles = "Administrator,Cliente")]
+        [Route("Emprestado/Update")]
+        [Authorize(Roles = "Administrator,Emprestado")]
         [HttpPost]
-        public async Task<IActionResult> Update(ClienteVm model)
+        public async Task<IActionResult> Update(EmprestadoVm model)
         {
-            List<Cliente> clientes = new List<Cliente>();
-            Cliente cliente = new Cliente();
+            List<Emprestado> Emprestados = new List<Emprestado>();
+            Emprestado Emprestado = new Emprestado();
             try
             {
-                var validator = new ClienteValidator();
+                var validator = new EmprestadoValidator();
                 var answerValidation = validator.Validate(model);
                 if (!answerValidation.IsValid)
                 {
                     return BadRequest(answerValidation.Errors);
                 }
-                _unit.Cliente.Update(_mapper.Map<Cliente>(model));
+                _unit.Emprestado.Update(_mapper.Map<Emprestado>(model));
                 _unit.Salvar();
                 _unit.Dispose();
             }
@@ -115,24 +117,24 @@ namespace MVC.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            return Ok(clientes);
+            return Ok(Emprestados);
         }
 
-        [Route("Cliente/Delete")]
-        [Authorize(Roles = "Administrator,Cliente")]
+        [Route("Emprestado/Delete")]
+        [Authorize(Roles = "Administrator,Emprestado")]
         [HttpDelete]
-        public async Task<IActionResult> Delete(ClienteVm model)
+        public async Task<IActionResult> Delete(EmprestadoVm model)
         {
-            Cliente cliente = new Cliente();
+            Emprestado Emprestado = new Emprestado();
             try
             {
-                var validator = new ClienteValidator();
+                var validator = new EmprestadoValidator();
                 var answerValidation = validator.Validate(model);
                 if (!answerValidation.IsValid)
                 {
                     return BadRequest(answerValidation.Errors);
                 }
-                _unit.Cliente.Delete(_mapper.Map<Cliente>(model));
+                _unit.Emprestado.Delete(_mapper.Map<Emprestado>(model));
                 _unit.Salvar();
                 _unit.Dispose();
             }
@@ -141,25 +143,6 @@ namespace MVC.Controllers
                 return BadRequest(ex.Message);
             }
             return Ok();
-        }
-
-        [Route("Cliente/ViaCep/{cep}")]
-        [HttpGet]
-        public async Task<Viacep> ViaCep(string cep)
-        {
-            Viacep? vc = new Viacep();
-            try
-            {
-                string url = "https://viacep.com.br";
-                var client = new RestClient(url);
-                var request = new RestRequest("/ws/" + cep.Replace("-", "") + "/json/", Method.Get);
-                vc = client.Execute<Viacep>(request).Data;
-            }
-            catch (Exception ex)
-            {
-                vc = new Viacep();
-            }
-            return vc;
         }
     }
 }

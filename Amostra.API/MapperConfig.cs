@@ -9,6 +9,7 @@ namespace Wagon.API
     {
         public MapperConfig()
         {
+            #region CLIENTE
             #region Cliente, DtoCliente
             CreateMap<Cliente, ClienteDto>()
                 .ForMember(
@@ -54,6 +55,14 @@ namespace Wagon.API
                 .ForMember(
                     dest => dest.Telefone,
                     opt => opt.MapFrom(src => src.Telefone)
+                )
+                .ForMember(
+                    dest => dest.Nascimento,
+                    opt => opt.MapFrom(src => src.Nascimento)
+                )
+                .ForMember(
+                    dest => dest.Idade,
+                    opt => opt.MapFrom(src => src.Idade)
                 )
                 .ForMember(
                     dest => dest.Ativo,
@@ -108,6 +117,14 @@ namespace Wagon.API
                     opt => opt.MapFrom(src => src.Telefone)
                 )
                 .ForMember(
+                    dest => dest.Nascimento,
+                    opt => opt.MapFrom(src => src.Nascimento)
+                )
+                .ForMember(
+                    dest => dest.Idade,
+                    opt => opt.MapFrom(src => src.Idade)
+                )
+                .ForMember(
                     dest => dest.Ativo,
                     opt => opt.MapFrom(src => src.Ativo)
                 );
@@ -158,6 +175,14 @@ namespace Wagon.API
                 .ForMember(
                     dest => dest.Telefone,
                     opt => opt.MapFrom(src => src.Telefone)
+                )
+                .ForMember(
+                    dest => dest.Nascimento,
+                    opt => opt.MapFrom(src => src.Nascimento)
+                )
+                .ForMember(
+                    dest => dest.Idade,
+                    opt => opt.MapFrom(src => src.Idade)
                 )
                 .ForMember(
                     dest => dest.Ativo,
@@ -212,9 +237,326 @@ namespace Wagon.API
                     opt => opt.MapFrom(src => src.Telefone)
                 )
                 .ForMember(
+                    dest => dest.Nascimento,
+                    opt => opt.MapFrom(src => src.Nascimento)
+                )
+                .ForMember(
+                    dest => dest.Idade,
+                    opt => opt.MapFrom(src => src.Idade)
+                )
+                .ForMember(
                     dest => dest.Ativo,
                     opt => opt.MapFrom(src => src.Ativo)
                 );
+            #endregion
+            #endregion
+
+            #region EMPRESTADO
+            #region Emprestado, EmprestadoDto
+            CreateMap<Emprestado, EmprestadoDto>()
+                .ForMember(
+                    dest => dest.Id,
+                    opt => opt.MapFrom(src => src.Id)
+                )
+                .ForMember(
+                    dest => dest.IdCliente,
+                    opt => opt.MapFrom(src => src.IdCliente)
+                )
+                .ForMember(
+                    dest => dest.IdLivro,
+                    opt => opt.MapFrom(src => src.IdLivro)
+                )
+                .ForMember(
+                    dest => dest.Dh,
+                    opt => opt.MapFrom(src => src.Dh)
+                )
+                .ForMember(
+                    dest => dest.DhDevolucao,
+                    opt => opt.MapFrom(src => src.DhDevolucao)
+                )
+                .ForMember(
+                    dest => dest.DiasEmprestado,
+                    opt => opt.MapFrom(src => src.DiasEmprestado)
+                )
+                .ForMember(
+                    dest => dest.Ativo,
+                    opt => opt.MapFrom(src => src.Ativo)
+                );
+            #endregion
+
+            #region Emprestado, EmprestadoVm
+            CreateMap<Emprestado, EmprestadoVm>()
+                .ForMember(
+                    dest => dest.Id,
+                    opt => opt.MapFrom(src => src.Id)
+                )
+                .ForMember(
+                    dest => dest.IdCliente,
+                    opt => opt.MapFrom(src => src.IdCliente)
+                )
+                .ForMember(
+                    dest => dest.IdLivro,
+                    opt => opt.MapFrom(src => src.IdLivro)
+                )
+                .ForMember(
+                    dest => dest.Dh,
+                    opt => opt.MapFrom(src => src.Dh)
+                )
+                .ForMember(
+                    dest => dest.DhDevolucao,
+                    opt => opt.MapFrom(src => src.DhDevolucao)
+                )
+                .ForMember(
+                    dest => dest.DiasEmprestado,
+                    opt => opt.MapFrom(src => src.DiasEmprestado)
+                )
+                .ForMember(
+                    dest => dest.Ativo,
+                    opt => opt.MapFrom(src => src.Ativo)
+                );
+            #endregion
+
+            #region EmprestadoVm, Emprestado
+            CreateMap<EmprestadoVm, Emprestado>()
+                .ForMember(
+                    dest => dest.Id,
+                    opt => opt.MapFrom(src => src.Id)
+                )
+                .ForMember(
+                    dest => dest.IdCliente,
+                    opt => opt.MapFrom(src => src.IdCliente)
+                )
+                .ForMember(
+                    dest => dest.IdLivro,
+                    opt => opt.MapFrom(src => src.IdLivro)
+                )
+                .ForMember(
+                    dest => dest.Dh,
+                    opt => opt.MapFrom(src => src.Dh)
+                )
+                .ForMember(
+                    dest => dest.DhDevolucao,
+                    opt => opt.MapFrom(src => src.DhDevolucao)
+                )
+                .ForMember(
+                    dest => dest.DiasEmprestado,
+                    opt => opt.MapFrom(src => src.DiasEmprestado)
+                )
+                .ForMember(
+                    dest => dest.Ativo,
+                    opt => opt.MapFrom(src => src.Ativo)
+                );
+            #endregion
+
+            #region EmprestadoDto, Emprestado
+            CreateMap<EmprestadoDto, Emprestado>()
+                .ForMember(
+                    dest => dest.Id,
+                    opt => opt.MapFrom(src => src.Id)
+                )
+                .ForMember(
+                    dest => dest.IdCliente,
+                    opt => opt.MapFrom(src => src.IdCliente)
+                )
+                .ForMember(
+                    dest => dest.IdLivro,
+                    opt => opt.MapFrom(src => src.IdLivro)
+                )
+                .ForMember(
+                    dest => dest.Dh,
+                    opt => opt.MapFrom(src => src.Dh)
+                )
+                .ForMember(
+                    dest => dest.DhDevolucao,
+                    opt => opt.MapFrom(src => src.DhDevolucao)
+                )
+                .ForMember(
+                    dest => dest.DiasEmprestado,
+                    opt => opt.MapFrom(src => src.DiasEmprestado)
+                )
+                .ForMember(
+                    dest => dest.Ativo,
+                    opt => opt.MapFrom(src => src.Ativo)
+                );
+            #endregion
+            #endregion
+
+            #region LIVRO
+            #region Livro, LivroDto
+            CreateMap<Livro, LivroDto>()
+                .ForMember(
+                    dest => dest.Id,
+                    opt => opt.MapFrom(src => src.Id)
+                )
+                .ForMember(
+                    dest => dest.DhCompra,
+                    opt => opt.MapFrom(src => src.DhCompra)
+                )
+                .ForMember(
+                    dest => dest.Titulo,
+                    opt => opt.MapFrom(src => src.Titulo)
+                )
+                .ForMember(
+                    dest => dest.Prefacio,
+                    opt => opt.MapFrom(src => src.Prefacio)
+                )
+                .ForMember(
+                    dest => dest.Autor,
+                    opt => opt.MapFrom(src => src.Autor)
+                )
+                .ForMember(
+                    dest => dest.Editora,
+                    opt => opt.MapFrom(src => src.Editora)
+                )
+                .ForMember(
+                    dest => dest.DhExtravio,
+                    opt => opt.MapFrom(src => src.DhExtravio)
+                )
+                .ForMember(
+                    dest => dest.Extraviado,
+                    opt => opt.MapFrom(src => src.Extraviado)
+                )
+                .ForMember(
+                    dest => dest.Emprestado,
+                    opt => opt.MapFrom(src => src.Emprestado)
+                )
+                .ForMember(
+                    dest => dest.Ativo,
+                    opt => opt.MapFrom(src => src.Ativo)
+                );
+            #endregion
+
+            #region Livro, VMLivro
+            CreateMap<Livro, LivroVm>()
+                .ForMember(
+                    dest => dest.Id,
+                    opt => opt.MapFrom(src => src.Id)
+                )
+                .ForMember(
+                    dest => dest.DhCompra,
+                    opt => opt.MapFrom(src => src.DhCompra)
+                )
+                .ForMember(
+                    dest => dest.Titulo,
+                    opt => opt.MapFrom(src => src.Titulo)
+                )
+                .ForMember(
+                    dest => dest.Prefacio,
+                    opt => opt.MapFrom(src => src.Prefacio)
+                )
+                .ForMember(
+                    dest => dest.Autor,
+                    opt => opt.MapFrom(src => src.Autor)
+                )
+                .ForMember(
+                    dest => dest.Editora,
+                    opt => opt.MapFrom(src => src.Editora)
+                )
+                .ForMember(
+                    dest => dest.DhExtravio,
+                    opt => opt.MapFrom(src => src.DhExtravio)
+                )
+                .ForMember(
+                    dest => dest.Extraviado,
+                    opt => opt.MapFrom(src => src.Extraviado)
+                )
+                .ForMember(
+                    dest => dest.Emprestado,
+                    opt => opt.MapFrom(src => src.Emprestado)
+                )
+                .ForMember(
+                    dest => dest.Ativo,
+                    opt => opt.MapFrom(src => src.Ativo)
+                );
+            #endregion
+
+            #region VMLivro, Livro
+            CreateMap<LivroVm, Livro>()
+                .ForMember(
+                    dest => dest.Id,
+                    opt => opt.MapFrom(src => src.Id)
+                )
+                .ForMember(
+                    dest => dest.DhCompra,
+                    opt => opt.MapFrom(src => src.DhCompra)
+                )
+                .ForMember(
+                    dest => dest.Titulo,
+                    opt => opt.MapFrom(src => src.Titulo)
+                )
+                .ForMember(
+                    dest => dest.Prefacio,
+                    opt => opt.MapFrom(src => src.Prefacio)
+                )
+                .ForMember(
+                    dest => dest.Autor,
+                    opt => opt.MapFrom(src => src.Autor)
+                )
+                .ForMember(
+                    dest => dest.Editora,
+                    opt => opt.MapFrom(src => src.Editora)
+                )
+                .ForMember(
+                    dest => dest.DhExtravio,
+                    opt => opt.MapFrom(src => src.DhExtravio)
+                )
+                .ForMember(
+                    dest => dest.Extraviado,
+                    opt => opt.MapFrom(src => src.Extraviado)
+                )
+                .ForMember(
+                    dest => dest.Emprestado,
+                    opt => opt.MapFrom(src => src.Emprestado)
+                )
+                .ForMember(
+                    dest => dest.Ativo,
+                    opt => opt.MapFrom(src => src.Ativo)
+                );
+            #endregion
+
+            #region LivroDto, Livro
+            CreateMap<LivroDto, Livro>()
+                .ForMember(
+                    dest => dest.Id,
+                    opt => opt.MapFrom(src => src.Id)
+                )
+                .ForMember(
+                    dest => dest.DhCompra,
+                    opt => opt.MapFrom(src => src.DhCompra)
+                )
+                .ForMember(
+                    dest => dest.Titulo,
+                    opt => opt.MapFrom(src => src.Titulo)
+                )
+                .ForMember(
+                    dest => dest.Prefacio,
+                    opt => opt.MapFrom(src => src.Prefacio)
+                )
+                .ForMember(
+                    dest => dest.Autor,
+                    opt => opt.MapFrom(src => src.Autor)
+                )
+                .ForMember(
+                    dest => dest.Editora,
+                    opt => opt.MapFrom(src => src.Editora)
+                )
+                .ForMember(
+                    dest => dest.DhExtravio,
+                    opt => opt.MapFrom(src => src.DhExtravio)
+                )
+                .ForMember(
+                    dest => dest.Extraviado,
+                    opt => opt.MapFrom(src => src.Extraviado)
+                )
+                .ForMember(
+                    dest => dest.Emprestado,
+                    opt => opt.MapFrom(src => src.Emprestado)
+                )
+                .ForMember(
+                    dest => dest.Ativo,
+                    opt => opt.MapFrom(src => src.Ativo)
+                );
+            #endregion
             #endregion
         }
     }

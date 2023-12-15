@@ -1,5 +1,6 @@
 using Amostra.API.Data;
 using Amostra.API.Data.Amostra;
+using Amostra.API.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,7 @@ namespace Amostra.API
 
             builder.Services.AddDbContext<AmostraContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Amostra")));
             builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlServer(configuration.GetConnectionString("WagonLogin")));
+
             // For Identity
             builder.Services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<AppDBContext>()
@@ -113,7 +115,7 @@ namespace Amostra.API
                     { jwtSecurityScheme, Array.Empty<string>() }
                 });
             });
-
+            builder.Services.AddTransient<IUnit, Unit>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

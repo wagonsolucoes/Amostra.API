@@ -1,8 +1,8 @@
 ﻿namespace Amostra.API.ViewModel.Amostra
 {
-    public class ClienteLst
+    public class LivroLst
     {
         public int ttRows { get; set; }
-        public List<ClienteDto> lst { get; set; }
+        public List<LivroDto> lst { get; set; }
     }
 }

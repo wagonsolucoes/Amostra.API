@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Amostra.API.Migrations.Amostra
 {
     [DbContext(typeof(AmostraContext))]
-    [Migration("20231031203545_AmostraInitialCreate")]
-    partial class AmostraInitialCreate
+    [Migration("20231215194122_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -65,6 +65,9 @@ namespace Amostra.API.Migrations.Amostra
                         .IsUnicode(false)
                         .HasColumnType("varchar(350)");
 
+                    b.Property<int?>("Idate")
+                        .HasColumnType("int");
+
                     b.Property<string>("Localidade")
                         .IsRequired()
                         .HasMaxLength(250)
@@ -76,6 +79,9 @@ namespace Amostra.API.Migrations.Amostra
                         .HasMaxLength(350)
                         .IsUnicode(false)
                         .HasColumnType("varchar(350)");
+
+                    b.Property<DateTime?>("Nascimento")
+                        .HasColumnType("date");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -105,6 +111,84 @@ namespace Amostra.API.Migrations.Amostra
                         .HasName("PK__Cliente__0BCA032B56169987");
 
                     b.ToTable("Cliente", (string)null);
+                });
+
+            modelBuilder.Entity("Amostra.API.Models.Amostra.Emprestado", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Dh")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DhDevolucao")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("DiasEmprestado")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IdCliente")
+                        .IsRequired()
+                        .HasMaxLength(14)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(14)");
+
+                    b.Property<Guid>("IdLivro")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id")
+                        .HasName("PK__Empresta__3214EC0764AA5852");
+
+                    b.ToTable("Emprestado", (string)null);
+                });
+
+            modelBuilder.Entity("Amostra.API.Models.Amostra.Livro", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Autor")
+                        .IsRequired()
+                        .HasMaxLength(350)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(350)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Dh")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Editora")
+                        .IsRequired()
+                        .HasMaxLength(350)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(350)");
+
+                    b.Property<string>("Prefacio")
+                        .IsRequired()
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(350)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(350)");
+
+                    b.HasKey("Id")
+                        .HasName("PK__Livro__3214EC074E7EA799");
+
+                    b.ToTable("Livro", (string)null);
                 });
 #pragma warning restore 612, 618
         }

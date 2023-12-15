@@ -62,7 +62,7 @@ namespace Amostra.API.Migrations.Amostra
                         .IsUnicode(false)
                         .HasColumnType("varchar(350)");
 
-                    b.Property<int?>("Idate")
+                    b.Property<int?>("Idade")
                         .HasColumnType("int");
 
                     b.Property<string>("Localidade")
@@ -142,6 +142,10 @@ namespace Amostra.API.Migrations.Amostra
                     b.HasKey("Id")
                         .HasName("PK__Empresta__3214EC0764AA5852");
 
+                    b.HasIndex("IdCliente");
+
+                    b.HasIndex("IdLivro");
+
                     b.ToTable("Emprestado", (string)null);
                 });
 
@@ -162,7 +166,10 @@ namespace Amostra.API.Migrations.Amostra
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("Dh")
+                    b.Property<DateTime>("DhCompra")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("DhExtravio")
                         .HasColumnType("datetime");
 
                     b.Property<string>("Editora")
@@ -170,6 +177,12 @@ namespace Amostra.API.Migrations.Amostra
                         .HasMaxLength(350)
                         .IsUnicode(false)
                         .HasColumnType("varchar(350)");
+
+                    b.Property<bool>("Emprestado")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("Extraviado")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Prefacio")
                         .IsRequired()
@@ -186,6 +199,35 @@ namespace Amostra.API.Migrations.Amostra
                         .HasName("PK__Livro__3214EC074E7EA799");
 
                     b.ToTable("Livro", (string)null);
+                });
+
+            modelBuilder.Entity("Amostra.API.Models.Amostra.Emprestado", b =>
+                {
+                    b.HasOne("Amostra.API.Models.Amostra.Cliente", "IdClienteNavigation")
+                        .WithMany("Emprestados")
+                        .HasForeignKey("IdCliente")
+                        .IsRequired()
+                        .HasConstraintName("FK_Emprestado_Cliente");
+
+                    b.HasOne("Amostra.API.Models.Amostra.Livro", "IdLivroNavigation")
+                        .WithMany("Emprestados")
+                        .HasForeignKey("IdLivro")
+                        .IsRequired()
+                        .HasConstraintName("FK_Emprestado_Livro");
+
+                    b.Navigation("IdClienteNavigation");
+
+                    b.Navigation("IdLivroNavigation");
+                });
+
+            modelBuilder.Entity("Amostra.API.Models.Amostra.Cliente", b =>
+                {
+                    b.Navigation("Emprestados");
+                });
+
+            modelBuilder.Entity("Amostra.API.Models.Amostra.Livro", b =>
+                {
+                    b.Navigation("Emprestados");
                 });
 #pragma warning restore 612, 618
         }

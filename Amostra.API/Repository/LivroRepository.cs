@@ -45,20 +45,9 @@ namespace Amostra.API.Repository
             #endregion
 
             #region ORDER BY
-            if (ColunaOrdenar == "DhCompra" || string.IsNullOrEmpty(ColunaOrdenar))
+            if (ColunaOrdenar == "Titulo")
             {
-                if (Direcao == "" || Direcao == "ASC")
-                {
-                    qry = qry.OrderBy(p => p.DhCompra);
-                }
-                else
-                {
-                    qry = qry.OrderByDescending(p => p.DhCompra);
-                }
-            }
-            if (ColunaOrdenar == "Titulo" || string.IsNullOrEmpty(ColunaOrdenar))
-            {
-                if (Direcao == "" || Direcao == "ASC")
+                if (Direcao == "ASC")
                 {
                     qry = qry.OrderBy(p => p.Titulo);
                 }
@@ -67,20 +56,9 @@ namespace Amostra.API.Repository
                     qry = qry.OrderByDescending(p => p.Titulo);
                 }
             }
-            if (ColunaOrdenar == "Prefacio" || string.IsNullOrEmpty(ColunaOrdenar))
+            if (ColunaOrdenar == "Autor")
             {
-                if (Direcao == "" || Direcao == "ASC")
-                {
-                    qry = qry.OrderBy(p => p.Prefacio);
-                }
-                else
-                {
-                    qry = qry.OrderByDescending(p => p.Prefacio);
-                }
-            }
-            if (ColunaOrdenar == "Autor" || string.IsNullOrEmpty(ColunaOrdenar))
-            {
-                if (Direcao == "" || Direcao == "ASC")
+                if (Direcao == "ASC")
                 {
                     qry = qry.OrderBy(p => p.Autor);
                 }
@@ -89,9 +67,9 @@ namespace Amostra.API.Repository
                     qry = qry.OrderByDescending(p => p.Autor);
                 }
             }
-            if (ColunaOrdenar == "Editora" || string.IsNullOrEmpty(ColunaOrdenar))
+            if (ColunaOrdenar == "Editora")
             {
-                if (Direcao == "" || Direcao == "ASC")
+                if (Direcao == "ASC")
                 {
                     qry = qry.OrderBy(p => p.Editora);
                 }
@@ -100,31 +78,9 @@ namespace Amostra.API.Repository
                     qry = qry.OrderByDescending(p => p.Editora);
                 }
             }
-            if (ColunaOrdenar == "DhExtravio" || string.IsNullOrEmpty(ColunaOrdenar))
+            if (ColunaOrdenar == "Ativo")
             {
-                if (Direcao == "" || Direcao == "ASC")
-                {
-                    qry = qry.OrderBy(p => p.DhExtravio);
-                }
-                else
-                {
-                    qry = qry.OrderByDescending(p => p.DhExtravio);
-                }
-            }
-            if (ColunaOrdenar == "Extraviado" || string.IsNullOrEmpty(ColunaOrdenar))
-            {
-                if (Direcao == "" || Direcao == "ASC")
-                {
-                    qry = qry.OrderBy(p => p.Extraviado);
-                }
-                else
-                {
-                    qry = qry.OrderByDescending(p => p.Extraviado);
-                }
-            }
-            if (ColunaOrdenar == "Ativo" || string.IsNullOrEmpty(ColunaOrdenar))
-            {
-                if (Direcao == "" || Direcao == "ASC")
+                if (Direcao == "ASC")
                 {
                     qry = qry.OrderBy(p => p.Ativo);
                 }

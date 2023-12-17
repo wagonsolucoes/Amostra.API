@@ -50,45 +50,61 @@ namespace Amostra.API.Repository
             #endregion
 
             #region ORDER BY
-            if (Direcao == "Cliente" || Direcao == "ASC")
+            if (ColunaOrdenar == "Cliente")
             {
-                qry = qry.OrderBy(p => p.IdClienteNavigation.Nome);
+                if (Direcao == "ASC")
+                {
+                    qry = qry.OrderBy(p => p.IdClienteNavigation.Nome);
+                }
+                else
+                {
+                    qry = qry.OrderByDescending(p => p.IdClienteNavigation.Nome);
+                }
             }
-            else
+            if (ColunaOrdenar == "Livro")
             {
-                qry = qry.OrderByDescending(p => p.IdClienteNavigation.Nome);
+                if (Direcao == "ASC")
+                {
+                    qry = qry.OrderBy(p => p.IdLivroNavigation.Titulo);
+                }
+                else
+                {
+                    qry = qry.OrderByDescending(p => p.IdLivroNavigation.Titulo);
+                }
             }
-            if (Direcao == "Livro" || Direcao == "ASC")
+            if (ColunaOrdenar == "Dh")
             {
-                qry = qry.OrderBy(p => p.IdLivroNavigation.Titulo);
+                if (Direcao == "ASC")
+                {
+                    qry = qry.OrderBy(p => p.Dh);
+                }
+                else
+                {
+                    qry = qry.OrderByDescending(p => p.Dh);
+                }
             }
-            else
+            if (ColunaOrdenar == "DhDevolucao")
             {
-                qry = qry.OrderByDescending(p => p.IdLivroNavigation.Titulo);
+                if (Direcao == "ASC")
+                {
+                    qry = qry.OrderBy(p => p.DhDevolucao);
+                }
+                else
+                {
+                    qry = qry.OrderByDescending(p => p.DhDevolucao);
+                }
             }
-            if (Direcao == "Dh" || Direcao == "ASC")
+
+            if (ColunaOrdenar == "Ativo")
             {
-                qry = qry.OrderBy(p => p.Dh);
-            }
-            else
-            {
-                qry = qry.OrderByDescending(p => p.Dh);
-            }
-            if (Direcao == "DhDevolucao" || Direcao == "ASC")
-            {
-                qry = qry.OrderBy(p => p.DhDevolucao);
-            }
-            else
-            {
-                qry = qry.OrderByDescending(p => p.DhDevolucao);
-            }
-            if (Direcao == "Ativo" || Direcao == "ASC")
-            {
-                qry = qry.OrderBy(p => p.Ativo);
-            }
-            else
-            {
-                qry = qry.OrderByDescending(p => p.Ativo);
+                if (Direcao == "ASC")
+                {
+                    qry = qry.OrderBy(p => p.Ativo);
+                }
+                else
+                {
+                    qry = qry.OrderByDescending(p => p.Ativo);
+                }
             }
             #endregion
 

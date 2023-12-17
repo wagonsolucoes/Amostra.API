@@ -47,9 +47,9 @@ namespace Amostra.API.Repository
             #endregion
 
             #region ORDER BY
-            if (ColunaOrdenar == "Nome" || string.IsNullOrEmpty(ColunaOrdenar))
+            if (ColunaOrdenar == "Documento")
             {
-                if (Direcao == "" || Direcao == "ASC")
+                if (Direcao == "ASC")
                 {
                     qry = qry.OrderBy(p => p.CpfCnpj);
                 }
@@ -58,20 +58,20 @@ namespace Amostra.API.Repository
                     qry = qry.OrderByDescending(p => p.CpfCnpj);
                 }
             }
-            if (ColunaOrdenar == "Numero" || string.IsNullOrEmpty(ColunaOrdenar))
+            if (ColunaOrdenar == "Nome")
             {
-                if (Direcao == "" || Direcao == "ASC")
+                if (Direcao == "ASC")
                 {
-                    qry = qry.OrderBy(p => p.Numero);
+                    qry = qry.OrderBy(p => p.Nome);
                 }
                 else
                 {
-                    qry = qry.OrderByDescending(p => p.Numero);
+                    qry = qry.OrderByDescending(p => p.Nome);
                 }
             }
-            if (ColunaOrdenar == "Bairro" || string.IsNullOrEmpty(ColunaOrdenar))
+            if (ColunaOrdenar == "Bairro")
             {
-                if (Direcao == "" || Direcao == "ASC")
+                if (Direcao == "ASC")
                 {
                     qry = qry.OrderBy(p => p.Bairro);
                 }
@@ -80,29 +80,29 @@ namespace Amostra.API.Repository
                     qry = qry.OrderByDescending(p => p.Bairro);
                 }
             }
-            if (ColunaOrdenar == "Bairro" || string.IsNullOrEmpty(ColunaOrdenar))
+            if (ColunaOrdenar == "Municipio")
             {
-                if (Direcao == "" || Direcao == "ASC")
+                if (Direcao == "ASC")
                 {
-                    qry = qry.OrderBy(p => p.Bairro);
+                    qry = qry.OrderBy(p => p.Localidade);
                 }
                 else
                 {
-                    qry = qry.OrderByDescending(p => p.Bairro);
+                    qry = qry.OrderByDescending(p => p.Localidade);
                 }
             }
-            if (ColunaOrdenar == "Cep" || string.IsNullOrEmpty(ColunaOrdenar))
+            if (ColunaOrdenar == "Uf")
             {
-                if (Direcao == "" || Direcao == "ASC")
+                if (Direcao == "ASC")
                 {
-                    qry = qry.OrderBy(p => p.Cep);
+                    qry = qry.OrderBy(p => p.Uf);
                 }
                 else
                 {
-                    qry = qry.OrderByDescending(p => p.Cep);
+                    qry = qry.OrderByDescending(p => p.Uf);
                 }
             }
-            if (ColunaOrdenar == "Email" || string.IsNullOrEmpty(ColunaOrdenar))
+            if (ColunaOrdenar == "Email")
             {
                 if (Direcao == "" || Direcao == "ASC")
                 {
@@ -111,6 +111,28 @@ namespace Amostra.API.Repository
                 else
                 {
                     qry = qry.OrderByDescending(p => p.Email);
+                }
+            }
+            if (ColunaOrdenar == "Telefone")
+            {
+                if (Direcao == "" || Direcao == "ASC")
+                {
+                    qry = qry.OrderBy(p => p.Telefone);
+                }
+                else
+                {
+                    qry = qry.OrderByDescending(p => p.Telefone);
+                }
+            }
+            if (ColunaOrdenar == "Ativo")
+            {
+                if (Direcao == "" || Direcao == "ASC")
+                {
+                    qry = qry.OrderBy(p => p.Ativo);
+                }
+                else
+                {
+                    qry = qry.OrderByDescending(p => p.Ativo);
                 }
             }
             #endregion

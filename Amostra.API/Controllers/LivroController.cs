@@ -52,12 +52,11 @@ namespace MVC.Controllers
             }
         }
 
-        [Route("Filtro")]
+        [Route("Filtro/{IniciaEm}/{QtdLinhas}/{TermoBusca}/{ColunaOrdenar}/{Direcao}/")]
         [Authorize(Roles = "Administrator,Livro")]
         [HttpGet]
-        public async Task<IActionResult> Filtro(int IniciaEm, int QtdLinhas, string TermoBusca = "", string ColunaOrdenar = "Nome", string Direcao = "ASC")
+        public async Task<IActionResult> Filtro(int IniciaEm, int QtdLinhas, string TermoBusca = "", string ColunaOrdenar = "Titulo", string Direcao = "ASC")
         {
-            LivroLst retorno = new LivroLst();
             try
             {
                 return Ok(_unit.Livro.Filtrar(IniciaEm, QtdLinhas, TermoBusca, ColunaOrdenar, Direcao));
@@ -68,7 +67,22 @@ namespace MVC.Controllers
             }            
         }
 
-        [Route("Livro/Add")]
+        [Authorize(Roles = "Administrator,Cliente")]
+        [Route("DdlLivro")]
+        [HttpGet]
+        public async Task<IActionResult> GetDdlLivro()
+        {
+            try
+            {
+                return Ok(_unit.Livro.GetDDL());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Route("Add")]
         [Authorize(Roles = "Administrator,Livro")]
         [HttpPost]
         public async Task<IActionResult> Add(LivroVm model)
@@ -94,9 +108,9 @@ namespace MVC.Controllers
             return Ok();
         }
 
-        [Route("Livro/Update")]
+        [Route("Update")]
         [Authorize(Roles = "Administrator,Livro")]
-        [HttpPost]
+        [HttpPut]
         public async Task<IActionResult> Update(LivroVm model)
         {
             List<Livro> Livros = new List<Livro>();
@@ -120,21 +134,19 @@ namespace MVC.Controllers
             return Ok(Livros);
         }
 
-        [Route("Livro/Delete")]
+        [Route("Delete/{id}")]
         [Authorize(Roles = "Administrator,Livro")]
         [HttpDelete]
-        public async Task<IActionResult> Delete(LivroVm model)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            Livro Livro = new Livro();
             try
             {
-                var validator = new LivroValidator();
-                var answerValidation = validator.Validate(model);
-                if (!answerValidation.IsValid)
+                var model = _unit.Livro.Find(x => x.Id == id).FirstOrDefault();
+                if (model == null)
                 {
-                    return BadRequest(answerValidation.Errors);
+                    return Ok();
                 }
-                _unit.Livro.Delete(_mapper.Map<Livro>(model));
+                _unit.Livro.Delete(model);
                 _unit.Salvar();
                 _unit.Dispose();
             }

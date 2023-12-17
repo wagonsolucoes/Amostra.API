@@ -52,14 +52,18 @@ namespace MVC.Controllers
             }
         }
 
-        [Route("Filtro")]
+        [Route("Filtro/{IniciaEm}/{QtdLinhas}/{sIdLivro}/{IdCliente}/{ColunaOrdenar}/{Direcao}")]
         [Authorize(Roles = "Administrator,Emprestado")]
         [HttpGet]
-        public async Task<IActionResult> Filtro(int IniciaEm, int QtdLinhas, string IdCliente, Guid IdLivro, string ColunaOrdenar = "Nome", string Direcao = "ASC")
+        public async Task<IActionResult> Filtro(int IniciaEm, int QtdLinhas, string sIdLivro = "", string IdCliente = "", string ColunaOrdenar = "Cliente", string Direcao = "ASC")
         {
-            EmprestadoLst retorno = new EmprestadoLst();
             try
             {
+                Guid IdLivro = Guid.Empty;
+                if (!string.IsNullOrEmpty(sIdLivro.Trim()))
+                {
+                    IdLivro = new Guid(sIdLivro);
+                }
                 return Ok(_unit.Emprestado.Filtrar(IniciaEm, QtdLinhas, IdCliente, IdLivro, ColunaOrdenar, Direcao));
             }
             catch (Exception ex)
@@ -68,7 +72,7 @@ namespace MVC.Controllers
             }            
         }
 
-        [Route("Emprestado/Add")]
+        [Route("Add")]
         [Authorize(Roles = "Administrator,Emprestado")]
         [HttpPost]
         public async Task<IActionResult> Add(EmprestadoVm model)
@@ -77,6 +81,7 @@ namespace MVC.Controllers
             {
                 model.Id = Guid.NewGuid();
                 model.Ativo = true;
+                model.Dh = DateTime.Now;
                 var validator = new EmprestadoValidator();
                 var answerValidation = validator.Validate(model);
                 if (!answerValidation.IsValid)
@@ -94,9 +99,9 @@ namespace MVC.Controllers
             return Ok();
         }
 
-        [Route("Emprestado/Update")]
+        [Route("Update")]
         [Authorize(Roles = "Administrator,Emprestado")]
-        [HttpPost]
+        [HttpPut]
         public async Task<IActionResult> Update(EmprestadoVm model)
         {
             List<Emprestado> Emprestados = new List<Emprestado>();
@@ -120,21 +125,19 @@ namespace MVC.Controllers
             return Ok(Emprestados);
         }
 
-        [Route("Emprestado/Delete")]
+        [Route("Delete/{id}")]
         [Authorize(Roles = "Administrator,Emprestado")]
         [HttpDelete]
-        public async Task<IActionResult> Delete(EmprestadoVm model)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            Emprestado Emprestado = new Emprestado();
             try
             {
-                var validator = new EmprestadoValidator();
-                var answerValidation = validator.Validate(model);
-                if (!answerValidation.IsValid)
+                var model = _unit.Emprestado.Find(x => x.Id == id).FirstOrDefault();
+                if (model == null)
                 {
-                    return BadRequest(answerValidation.Errors);
+                    return Ok();
                 }
-                _unit.Emprestado.Delete(_mapper.Map<Emprestado>(model));
+                _unit.Emprestado.Delete(model);
                 _unit.Salvar();
                 _unit.Dispose();
             }

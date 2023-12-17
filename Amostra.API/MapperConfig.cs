@@ -281,6 +281,14 @@ namespace Wagon.API
                 .ForMember(
                     dest => dest.Ativo,
                     opt => opt.MapFrom(src => src.Ativo)
+                )
+                .ForMember(
+                    dest => dest.Cliente,
+                    opt => opt.MapFrom(src => src.IdClienteNavigation)
+                )
+                .ForMember(
+                    dest => dest.Livro,
+                    opt => opt.MapFrom(src => src.IdLivroNavigation)
                 );
             #endregion
 
@@ -377,6 +385,14 @@ namespace Wagon.API
                 .ForMember(
                     dest => dest.Ativo,
                     opt => opt.MapFrom(src => src.Ativo)
+                )
+                .ForMember(
+                    dest => dest.IdClienteNavigation,
+                    opt => opt.MapFrom(src => src.Cliente)
+                )
+                .ForMember(
+                    dest => dest.IdLivroNavigation,
+                    opt => opt.MapFrom(src => src.Livro)
                 );
             #endregion
             #endregion

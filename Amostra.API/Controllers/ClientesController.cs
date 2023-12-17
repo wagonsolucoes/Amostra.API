@@ -52,10 +52,9 @@ namespace MVC.Controllers
             }
         }
 
-        [Route("Filtro")]
         [Authorize(Roles = "Administrator,Cliente")]
-        [HttpGet]
-        public async Task<IActionResult> Filtro(int IniciaEm, int QtdLinhas, string TermoBusca = "", string ColunaOrdenar = "Nome", string Direcao = "ASC")
+        [HttpGet("{IniciaEm}/{QtdLinhas}/{TermoBusca}/{ColunaOrdenar}/{Direcao}")]
+        public async Task<IActionResult> GetFiltro(int IniciaEm, int QtdLinhas, string TermoBusca = " ", string ColunaOrdenar = "Nome", string Direcao = "ASC")
         {
             ClienteLst retorno = new ClienteLst();
             try
@@ -68,7 +67,22 @@ namespace MVC.Controllers
             }            
         }
 
-        [Route("Cliente/Add")]
+        [Authorize(Roles = "Administrator,Cliente")]
+        [Route("DdlCliente")]
+        [HttpGet]
+        public async Task<IActionResult> GetDdlCliente()
+        {
+            try
+            {
+                return Ok(_unit.Cliente.GetDdlCliente());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Route("Add")]
         [Authorize(Roles = "Administrator,Cliente")]
         [HttpPost]
         public async Task<IActionResult> Add(ClienteVm model)
@@ -92,9 +106,8 @@ namespace MVC.Controllers
             return Ok();
         }
 
-        [Route("Cliente/Update")]
-        [Authorize(Roles = "Administrator,Cliente")]
-        [HttpPost]
+        [Route("Update")]
+        [HttpPut]
         public async Task<IActionResult> Update(ClienteVm model)
         {
             List<Cliente> clientes = new List<Cliente>();
@@ -118,21 +131,19 @@ namespace MVC.Controllers
             return Ok(clientes);
         }
 
-        [Route("Cliente/Delete")]
+        [Route("Delete/{id}")]
         [Authorize(Roles = "Administrator,Cliente")]
         [HttpDelete]
-        public async Task<IActionResult> Delete(ClienteVm model)
+        public async Task<IActionResult> Delete(string id)
         {
-            Cliente cliente = new Cliente();
             try
             {
-                var validator = new ClienteValidator();
-                var answerValidation = validator.Validate(model);
-                if (!answerValidation.IsValid)
+                var model = _unit.Cliente.GetValueById(id);
+                if(model == null)
                 {
-                    return BadRequest(answerValidation.Errors);
+                    return Ok();
                 }
-                _unit.Cliente.Delete(_mapper.Map<Cliente>(model));
+                _unit.Cliente.Delete(model);
                 _unit.Salvar();
                 _unit.Dispose();
             }

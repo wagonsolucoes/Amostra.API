@@ -1,7 +1,10 @@
 ﻿using Amostra.API.Data.Amostra;
 using Amostra.API.Models.Amostra;
+using Amostra.API.ViewModel;
 using Amostra.API.ViewModel.Amostra;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -122,6 +125,13 @@ namespace Amostra.API.Repository
             #endregion
 
             return retorno;
+        }
+
+        public List<SelectDto> GetDdlCliente()
+        {
+            List<SelectDto> sel = new List<SelectDto>();
+            sel = (from o in _ctx.Clientes orderby o.Nome select new SelectDto { val = o.CpfCnpj, txt = o.Nome }).ToList();
+            return sel;
         }
     }
 }

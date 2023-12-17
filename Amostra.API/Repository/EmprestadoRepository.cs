@@ -20,7 +20,7 @@ namespace Amostra.API.Repository
             _mapper = mapper;
         }
 
-        public EmprestadoLst Filtrar(int IniciaEm, int QtdLinhas, string IdCliente, Guid IdLivro, string ColunaOrdenar = "Nome", string Direcao = "ASC")
+        public EmprestadoLst Filtrar(int IniciaEm, int QtdLinhas, string IdCliente, Guid? IdLivro, string ColunaOrdenar = "Cliente", string Direcao = "ASC")
         {
             #region DECLARES
             EmprestadoLst retorno = new EmprestadoLst();
@@ -28,20 +28,21 @@ namespace Amostra.API.Repository
             #endregion
 
             #region IQUERYABLE
-            IQueryable<Emprestado> qry = _ctx.Emprestados.Include(x => x.IdLivro).Include(y => y.IdCliente);
-            IQueryable<Emprestado> qryTotalizador = _ctx.Emprestados.Include(x => x.IdLivro).Include(y => y.IdCliente);
+            IQueryable<Emprestado> qry = _ctx.Emprestados.Include(y => y.IdClienteNavigation).Include(x => x.IdLivroNavigation);
+            IQueryable<Emprestado> qryTotalizador = _ctx.Emprestados;
             #endregion
 
             #region WHERE
             if (!string.IsNullOrEmpty(IdCliente))
             {
                 qry = qry.Where(x => x.IdCliente == IdCliente);
+                qryTotalizador = qryTotalizador.Where(x => x.IdCliente == IdCliente);
             }
             if (IdLivro != Guid.Empty)
             {
                 qry = qry.Where(x => x.IdLivro == IdLivro);
+                qryTotalizador = qryTotalizador.Where(x => x.IdLivro == IdLivro);
             }
-            qryTotalizador = qry; 
             #endregion
 
             #region PAGINADOR
@@ -49,14 +50,46 @@ namespace Amostra.API.Repository
             #endregion
 
             #region ORDER BY
-            if (Direcao == "" || Direcao == "ASC")
+            if (Direcao == "Cliente" || Direcao == "ASC")
+            {
+                qry = qry.OrderBy(p => p.IdClienteNavigation.Nome);
+            }
+            else
+            {
+                qry = qry.OrderByDescending(p => p.IdClienteNavigation.Nome);
+            }
+            if (Direcao == "Livro" || Direcao == "ASC")
+            {
+                qry = qry.OrderBy(p => p.IdLivroNavigation.Titulo);
+            }
+            else
+            {
+                qry = qry.OrderByDescending(p => p.IdLivroNavigation.Titulo);
+            }
+            if (Direcao == "Dh" || Direcao == "ASC")
             {
                 qry = qry.OrderBy(p => p.Dh);
             }
             else
             {
                 qry = qry.OrderByDescending(p => p.Dh);
-            }            
+            }
+            if (Direcao == "DhDevolucao" || Direcao == "ASC")
+            {
+                qry = qry.OrderBy(p => p.DhDevolucao);
+            }
+            else
+            {
+                qry = qry.OrderByDescending(p => p.DhDevolucao);
+            }
+            if (Direcao == "Ativo" || Direcao == "ASC")
+            {
+                qry = qry.OrderBy(p => p.Ativo);
+            }
+            else
+            {
+                qry = qry.OrderByDescending(p => p.Ativo);
+            }
             #endregion
 
             #region RETORNO

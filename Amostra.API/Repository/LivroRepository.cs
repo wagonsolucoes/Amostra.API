@@ -1,5 +1,6 @@
 ﻿using Amostra.API.Data.Amostra;
 using Amostra.API.Models.Amostra;
+using Amostra.API.ViewModel;
 using Amostra.API.ViewModel.Amostra;
 using AutoMapper;
 using System.Collections.Generic;
@@ -144,6 +145,13 @@ namespace Amostra.API.Repository
             #endregion
 
             return retorno;
+        }
+
+        public List<SelectDto> GetDDL()
+        {
+            List<SelectDto> sel = new List<SelectDto>();
+            sel = (from o in _ctx.Livros orderby o.Titulo select new SelectDto { id = o.Id, txt = o.Titulo }).ToList();
+            return sel;
         }
     }
 }

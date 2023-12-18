@@ -61,6 +61,8 @@ namespace Amostra.API.Services
             }
             else
             {
+                TimeSpan idade = DateTime.Now - model.Nascimento;
+                model.Idade = (int)(idade.Days / 365.25);
                 _unit.Cliente.Add(_mapper.Map<Cliente>(model));
                 _unit.Salvar();
                 _unit.Dispose();
@@ -81,6 +83,8 @@ namespace Amostra.API.Services
             }
             else
             {
+                TimeSpan idade = DateTime.Now - model.Nascimento;
+                model.Idade = (int)(idade.Days / 365.25);
                 _unit.Cliente.Update(_mapper.Map<Cliente>(model));
                 _unit.Salvar();
                 _unit.Dispose();

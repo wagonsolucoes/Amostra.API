@@ -10,7 +10,8 @@ namespace Wagon.API
         public MapperConfig()
         {
             #region CLIENTE
-            #region Cliente, DtoCliente
+
+            #region Cliente, ClienteDto
             CreateMap<Cliente, ClienteDto>()
                 .ForMember(
                     dest => dest.Documento,
@@ -43,6 +44,66 @@ namespace Wagon.API
                 .ForMember(
                     dest => dest.Municipio,
                     opt => opt.MapFrom(src => src.Localidade)
+                )
+                .ForMember(
+                    dest => dest.Uf,
+                    opt => opt.MapFrom(src => src.Uf)
+                )
+                .ForMember(
+                    dest => dest.Email,
+                    opt => opt.MapFrom(src => src.Email)
+                )
+                .ForMember(
+                    dest => dest.Telefone,
+                    opt => opt.MapFrom(src => src.Telefone)
+                )
+                .ForMember(
+                    dest => dest.Nascimento,
+                    opt => opt.MapFrom(src => src.Nascimento)
+                )
+                .ForMember(
+                    dest => dest.Idade,
+                    opt => opt.MapFrom(src => src.Idade)
+                )
+                .ForMember(
+                    dest => dest.Ativo,
+                    opt => opt.MapFrom(src => src.Ativo)
+                );
+            #endregion
+
+            #region ClienteDto, Cliente
+            CreateMap<ClienteDto, Cliente>()
+                .ForMember(
+                    dest => dest.CpfCnpj,
+                    opt => opt.MapFrom(src => src.Documento)
+                )
+                .ForMember(
+                    dest => dest.Nome,
+                    opt => opt.MapFrom(src => src.Nome)
+                )
+                .ForMember(
+                    dest => dest.Cep,
+                    opt => opt.MapFrom(src => src.Cep)
+                )
+                .ForMember(
+                    dest => dest.Logradouro,
+                    opt => opt.MapFrom(src => src.Endereco)
+                )
+                .ForMember(
+                    dest => dest.Numero,
+                    opt => opt.MapFrom(src => src.Numero)
+                )
+                .ForMember(
+                    dest => dest.Complemento,
+                    opt => opt.MapFrom(src => src.Complemento)
+                )
+                .ForMember(
+                    dest => dest.Bairro,
+                    opt => opt.MapFrom(src => src.Bairro)
+                )
+                .ForMember(
+                    dest => dest.Localidade,
+                    opt => opt.MapFrom(src => src.Municipio)
                 )
                 .ForMember(
                     dest => dest.Uf,
@@ -190,65 +251,6 @@ namespace Wagon.API
                 );
             #endregion
 
-            #region DtoCliente, Cliente
-            CreateMap<ClienteDto, Cliente>()
-                .ForMember(
-                    dest => dest.CpfCnpj,
-                    opt => opt.MapFrom(src => src.Documento)
-                )
-                .ForMember(
-                    dest => dest.Nome,
-                    opt => opt.MapFrom(src => src.Nome)
-                )
-                .ForMember(
-                    dest => dest.Cep,
-                    opt => opt.MapFrom(src => src.Cep)
-                )
-                .ForMember(
-                    dest => dest.Logradouro,
-                    opt => opt.MapFrom(src => src.Endereco)
-                )
-                .ForMember(
-                    dest => dest.Numero,
-                    opt => opt.MapFrom(src => src.Numero)
-                )
-                .ForMember(
-                    dest => dest.Complemento,
-                    opt => opt.MapFrom(src => src.Complemento)
-                )
-                .ForMember(
-                    dest => dest.Bairro,
-                    opt => opt.MapFrom(src => src.Bairro)
-                )
-                .ForMember(
-                    dest => dest.Localidade,
-                    opt => opt.MapFrom(src => src.Municipio)
-                )
-                .ForMember(
-                    dest => dest.Uf,
-                    opt => opt.MapFrom(src => src.Uf)
-                )
-                .ForMember(
-                    dest => dest.Email,
-                    opt => opt.MapFrom(src => src.Email)
-                )
-                .ForMember(
-                    dest => dest.Telefone,
-                    opt => opt.MapFrom(src => src.Telefone)
-                )
-                .ForMember(
-                    dest => dest.Nascimento,
-                    opt => opt.MapFrom(src => src.Nascimento)
-                )
-                .ForMember(
-                    dest => dest.Idade,
-                    opt => opt.MapFrom(src => src.Idade)
-                )
-                .ForMember(
-                    dest => dest.Ativo,
-                    opt => opt.MapFrom(src => src.Ativo)
-                );
-            #endregion
             #endregion
 
             #region EMPRESTADO

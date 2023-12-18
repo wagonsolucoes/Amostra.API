@@ -6,8 +6,12 @@ namespace Amostra.API.Repository
 {
     public interface IClienteRepository: IGenericRepository<Cliente>
     {
-        public ClienteLst Filtrar(int IniciaEm, int QtdLinhas, string TermoBusca, string ColunaOrdenar, string Direcao);
+        public Task<ClienteLst?> Filtrar(int IniciaEm, int QtdLinhas, string TermoBusca, string ColunaOrdenar, string Direcao);
         
-        public List<SelectDto> GetDdlCliente();
+        public Task<int> FiltrarCount(string TermoBusca = "");
+
+        public Task<List<Cliente>> FiltrarLista(int IniciaEm, int QtdLinhas, string TermoBusca = "", string ColunaOrdenar = "Nome", string Direcao = "ASC");
+
+        public Task<List<SelectDto>> GetDdlCliente();
     }
 }

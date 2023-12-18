@@ -10,6 +10,8 @@ using Microsoft.OpenApi.Models;
 using System.Linq;
 using System.Text;
 using Wagon.API;
+using Amostra.API.Services;
+
 namespace Amostra.API
 {
     public class Program
@@ -115,6 +117,7 @@ namespace Amostra.API
                     { jwtSecurityScheme, Array.Empty<string>() }
                 });
             });
+            builder.Services.AddTransient<IUniteService, UniteService>();
             builder.Services.AddTransient<IUnit, Unit>();
             var app = builder.Build();
 

@@ -14,6 +14,9 @@ using AutoMapper;
 using Amostra.API.ViewModel;
 using RestSharp;
 using Amostra.API.Repository;
+using System.Runtime.CompilerServices;
+using Amostra.API.Services;
+using FluentValidation.Results;
 
 namespace MVC.Controllers
 {
@@ -24,12 +27,14 @@ namespace MVC.Controllers
         private readonly AmostraContext _context;
         private readonly IMapper _mapper;
         private IUnit _unit;
+        private IUniteService _srv;
 
-        public ClientesController(AmostraContext context, IMapper mapper, IUnit unit)
+        public ClientesController(AmostraContext context, IMapper mapper, IUnit unit, IUniteService srv)
         {
             _context = context;
             _mapper = mapper;
             _unit = unit;
+            _srv = new UniteService(_context, _mapper, _unit);
         }
 
         [Authorize(Roles = "Administrator,Cliente")]
@@ -38,28 +43,29 @@ namespace MVC.Controllers
         {
             try
             {
-                var cliente = _unit.Cliente.GetValueById(id);
+                var cliente = _srv.ClienteSrv.GetValueById(id);
                 if (cliente == null)
                 {
                     return NotFound();
                 }
-                var dto = _mapper.Map<ClienteDto>(cliente);
-                return Ok(dto);
+                return Ok(cliente);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
-
+        
         [Authorize(Roles = "Administrator,Cliente")]
         [HttpGet("{IniciaEm}/{QtdLinhas}/{TermoBusca}/{ColunaOrdenar}/{Direcao}")]
         public async Task<IActionResult> GetFiltro(int IniciaEm, int QtdLinhas, string TermoBusca = " ", string ColunaOrdenar = "Nome", string Direcao = "ASC")
         {
-            ClienteLst retorno = new ClienteLst();
+            ClienteLst r = new ClienteLst();
             try
             {
-                return Ok(_unit.Cliente.Filtrar(IniciaEm, QtdLinhas, TermoBusca, ColunaOrdenar, Direcao));
+                r.ttRows = await _srv.ClienteSrv.FiltrarCount(TermoBusca);
+                r.lst = _mapper.Map<List<ClienteDto>>(await _srv.ClienteSrv.FiltrarList(IniciaEm, QtdLinhas, TermoBusca, ColunaOrdenar, Direcao));
+                return Ok(r);
             }
             catch (Exception ex)
             {
@@ -74,7 +80,7 @@ namespace MVC.Controllers
         {
             try
             {
-                return Ok(_unit.Cliente.GetDdlCliente());
+                return Ok(await _srv.ClienteSrv.GetDdlCliente());
             }
             catch (Exception ex)
             {
@@ -87,48 +93,32 @@ namespace MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(ClienteVm model)
         {
+            List<ValidationFailure> r = new List<ValidationFailure>();
             try
-            {
-                var validator = new ClienteValidator();
-                var answerValidation = validator.Validate(model);
-                if (!answerValidation.IsValid)
-                {
-                    return BadRequest(answerValidation.Errors);
-                }
-                _unit.Cliente.Add(_mapper.Map<Cliente>(model));
-                _unit.Salvar();
-                _unit.Dispose();
+            {             
+                r = await _srv.ClienteSrv.Add(model);
+                return Ok(r);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-            return Ok();
         }
 
         [Route("Update")]
         [HttpPut]
         public async Task<IActionResult> Update(ClienteVm model)
         {
-            List<Cliente> clientes = new List<Cliente>();
-            Cliente cliente = new Cliente();
+            List<ValidationFailure> r = new List<ValidationFailure>();
             try
             {
-                var validator = new ClienteValidator();
-                var answerValidation = validator.Validate(model);
-                if (!answerValidation.IsValid)
-                {
-                    return BadRequest(answerValidation.Errors);
-                }
-                _unit.Cliente.Update(_mapper.Map<Cliente>(model));
-                _unit.Salvar();
-                _unit.Dispose();
+                r = await _srv.ClienteSrv.Update(model);
+                return Ok(r);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
-            }
-            return Ok(clientes);
+            }            
         }
 
         [Route("Delete/{id}")]
@@ -138,33 +128,22 @@ namespace MVC.Controllers
         {
             try
             {
-                var model = _unit.Cliente.GetValueById(id);
-                if(model == null)
-                {
-                    return Ok();
-                }
-                _unit.Cliente.Delete(model);
-                _unit.Salvar();
-                _unit.Dispose();
+                return Ok(await _srv.ClienteSrv.Delete(id));
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-            return Ok();
         }
 
         [Route("Cliente/ViaCep/{cep}")]
         [HttpGet]
-        public async Task<Viacep> ViaCep(string cep)
+        public async Task<Viacep?> ViaCep(string cep)
         {
             Viacep? vc = new Viacep();
             try
             {
-                string url = "https://viacep.com.br";
-                var client = new RestClient(url);
-                var request = new RestRequest("/ws/" + cep.Replace("-", "") + "/json/", Method.Get);
-                vc = client.Execute<Viacep>(request).Data;
+                vc = await _srv.ClienteSrv.ViaCep(cep);
             }
             catch (Exception ex)
             {

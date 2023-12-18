@@ -14,6 +14,8 @@ using AutoMapper;
 using Amostra.API.ViewModel;
 using RestSharp;
 using Amostra.API.Repository;
+using Amostra.API.Services;
+using FluentValidation.Results;
 
 namespace MVC.Controllers
 {
@@ -24,47 +26,32 @@ namespace MVC.Controllers
         private readonly AmostraContext _context;
         private readonly IMapper _mapper;
         private IUnit _unit;
+        private IUniteService _srv;
 
         public LivroController(AmostraContext context, IMapper mapper, IUnit unit)
         {
             _context = context;
             _mapper = mapper;
             _unit = unit;
-        }
-
-        [Authorize(Roles = "Administrator,Cliente")]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetValueById(string id)
-        {
-            try
-            {
-                var Livro = _unit.Livro.GetValueById(id);
-                if (Livro == null)
-                {
-                    return NotFound();
-                }
-                var dto = _mapper.Map<LivroDto>(Livro);
-                return Ok(dto);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            _srv = new UniteService(_context, _mapper, _unit);
         }
 
         [Route("Filtro/{IniciaEm}/{QtdLinhas}/{TermoBusca}/{ColunaOrdenar}/{Direcao}/")]
         [Authorize(Roles = "Administrator,Livro")]
         [HttpGet]
-        public async Task<IActionResult> Filtro(int IniciaEm, int QtdLinhas, string TermoBusca = "", string ColunaOrdenar = "Titulo", string Direcao = "ASC")
+        public async Task<IActionResult> GetFiltro(int IniciaEm, int QtdLinhas, string TermoBusca = "", string ColunaOrdenar = "Titulo", string Direcao = "ASC")
         {
+            LivroLst r = new LivroLst();
             try
             {
-                return Ok(_unit.Livro.Filtrar(IniciaEm, QtdLinhas, TermoBusca, ColunaOrdenar, Direcao));
+                r.ttRows = await _srv.LivroSrv.FiltrarCount(TermoBusca);
+                r.lst = _mapper.Map<List<LivroDto>>(await _srv.LivroSrv.FiltrarList(IniciaEm, QtdLinhas, TermoBusca, ColunaOrdenar, Direcao));
+                return Ok(r);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
-            }            
+            }        
         }
 
         [Authorize(Roles = "Administrator,Cliente")]
@@ -87,25 +74,16 @@ namespace MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(LivroVm model)
         {
+            List<ValidationFailure> r = new List<ValidationFailure>();
             try
             {
-                model.Id = Guid.NewGuid();
-                model.Ativo = true;
-                var validator = new LivroValidator();
-                var answerValidation = validator.Validate(model);
-                if (!answerValidation.IsValid)
-                {
-                    return BadRequest(answerValidation.Errors);
-                }
-                _unit.Livro.Add(_mapper.Map<Livro>(model));
-                _unit.Salvar();
-                _unit.Dispose();
+                r = await _srv.LivroSrv.Add(model);
+                return Ok(r);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-            return Ok();
         }
 
         [Route("Update")]
@@ -113,25 +91,16 @@ namespace MVC.Controllers
         [HttpPut]
         public async Task<IActionResult> Update(LivroVm model)
         {
-            List<Livro> Livros = new List<Livro>();
-            Livro Livro = new Livro();
+            List<ValidationFailure> r = new List<ValidationFailure>();
             try
             {
-                var validator = new LivroValidator();
-                var answerValidation = validator.Validate(model);
-                if (!answerValidation.IsValid)
-                {
-                    return BadRequest(answerValidation.Errors);
-                }
-                _unit.Livro.Update(_mapper.Map<Livro>(model));
-                _unit.Salvar();
-                _unit.Dispose();
+                r = await _srv.LivroSrv.Update(model);
+                return Ok(r);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-            return Ok(Livros);
         }
 
         [Route("Delete/{id}")]
@@ -141,20 +110,12 @@ namespace MVC.Controllers
         {
             try
             {
-                var model = _unit.Livro.Find(x => x.Id == id).FirstOrDefault();
-                if (model == null)
-                {
-                    return Ok();
-                }
-                _unit.Livro.Delete(model);
-                _unit.Salvar();
-                _unit.Dispose();
+                return Ok(await _srv.LivroSrv.Delete(id));
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-            return Ok();
         }
     }
 }

@@ -36,25 +36,6 @@ namespace MVC.Controllers
             _unit = unit;
             _srv = new UniteService(_context, _mapper, _unit);
         }
-
-        [Authorize(Roles = "Administrator,Cliente")]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetValueById(string id)
-        {
-            try
-            {
-                var cliente = _srv.ClienteSrv.GetValueById(id);
-                if (cliente == null)
-                {
-                    return NotFound();
-                }
-                return Ok(cliente);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
         
         [Authorize(Roles = "Administrator,Cliente")]
         [HttpGet("{IniciaEm}/{QtdLinhas}/{TermoBusca}/{ColunaOrdenar}/{Direcao}")]

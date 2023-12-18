@@ -20,7 +20,27 @@ namespace Amostra.API.Repository
             _mapper = mapper;
         }
 
-        public EmprestadoLst Filtrar(int IniciaEm, int QtdLinhas, string IdCliente, Guid? IdLivro, string ColunaOrdenar = "Cliente", string Direcao = "ASC")
+        public async Task<int> FiltrarCount(string IdCliente, Guid? IdLivro)
+        {
+            #region IQUERYABLE
+            IQueryable<Emprestado> qryTotalizador = _ctx.Emprestados;
+            #endregion
+
+            #region WHERE
+            if (!string.IsNullOrEmpty(IdCliente))
+            {
+                qryTotalizador = qryTotalizador.Where(x => x.IdCliente == IdCliente);
+            }
+            if (IdLivro != Guid.Empty)
+            {
+                qryTotalizador = qryTotalizador.Where(x => x.IdLivro == IdLivro);
+            }
+            #endregion
+
+            return qryTotalizador.ToList().Count();
+        }
+
+        public async Task<List<Emprestado>> FiltrarLista(int IniciaEm, int QtdLinhas, string IdCliente, Guid? IdLivro, string ColunaOrdenar = "Cliente", string Direcao = "ASC")
         {
             #region DECLARES
             EmprestadoLst retorno = new EmprestadoLst();
@@ -29,19 +49,16 @@ namespace Amostra.API.Repository
 
             #region IQUERYABLE
             IQueryable<Emprestado> qry = _ctx.Emprestados.Include(y => y.IdClienteNavigation).Include(x => x.IdLivroNavigation);
-            IQueryable<Emprestado> qryTotalizador = _ctx.Emprestados;
             #endregion
 
             #region WHERE
             if (!string.IsNullOrEmpty(IdCliente))
             {
                 qry = qry.Where(x => x.IdCliente == IdCliente);
-                qryTotalizador = qryTotalizador.Where(x => x.IdCliente == IdCliente);
             }
             if (IdLivro != Guid.Empty)
             {
                 qry = qry.Where(x => x.IdLivro == IdLivro);
-                qryTotalizador = qryTotalizador.Where(x => x.IdLivro == IdLivro);
             }
             #endregion
 
@@ -108,16 +125,7 @@ namespace Amostra.API.Repository
             }
             #endregion
 
-            #region RETORNO
-            retorno.ttRows = qryTotalizador.ToList().Count();
-            lst = qry.ToList();
-            if (lst != null && lst.Count > 0)
-            {
-                retorno.lst = _mapper.Map<List<EmprestadoDto>>(lst);
-            }
-            #endregion
-
-            return retorno;
+            return qry.ToList();
         }
     }
 }

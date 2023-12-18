@@ -10,7 +10,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Amostra.API.Services
 {
-    public class LivroService
+    public class LivroService: ILivroService
     {
         private readonly AmostraContext _context;
         private readonly IMapper _mapper;
@@ -23,26 +23,19 @@ namespace Amostra.API.Services
             _unit = unit;
         }
 
-        public async Task<LivroDto> GetValueById(string id)
+        public async Task<int> FiltrarCount(string TermoBusca = " ")
         {
-            LivroDto r = new LivroDto();
-            var Livro = _unit.Livro.GetValueById(id);
-            if (Livro == null)
-            {
-                return r;
-            }
-            r = _mapper.Map<LivroDto>(Livro);
-            return r;
+            return await _unit.Livro.FiltrarCount(TermoBusca);
         }
 
-        public async Task<LivroLst> Filtro(int IniciaEm, int QtdLinhas, string TermoBusca = "", string ColunaOrdenar = "Titulo", string Direcao = "ASC")
+        public async Task<List<Livro>> FiltrarList(int IniciaEm, int QtdLinhas, string TermoBusca = " ", string ColunaOrdenar = "Titulo", string Direcao = "ASC")
         {
-            return _unit.Livro.Filtrar(IniciaEm, QtdLinhas, TermoBusca, ColunaOrdenar, Direcao);
+            return await _unit.Livro.FiltrarLista(IniciaEm, QtdLinhas, TermoBusca, ColunaOrdenar, Direcao);
         }
 
         public async Task<List<SelectDto>> GetDdlLivro()
         {
-            return _unit.Livro.GetDDL();
+            return await _unit.Livro.GetDDL();
         }
 
         public async Task<List<ValidationFailure>> Add(LivroVm model)

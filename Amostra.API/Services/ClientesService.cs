@@ -26,10 +26,10 @@ namespace Amostra.API.Services
         public async Task<ClienteDto> GetValueById(string id)
         {
             ClienteDto r = new ClienteDto();
-            var cliente = _unit.Cliente.GetValueById(id);
-            if (cliente != null)
+            var obj = _unit.Cliente.GetValueById(id);
+            if (obj != null)
             {
-                r = _mapper.Map<ClienteDto>(cliente);
+                r = _mapper.Map<ClienteDto>(obj);
             }
             return r;
         }

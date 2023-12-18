@@ -6,7 +6,10 @@ namespace Amostra.API.Repository
 {
     public interface ILivroRepository : IGenericRepository<Livro>
     {
-        public LivroLst Filtrar(int IniciaEm, int QtdLinhas, string TermoBusca = "", string ColunaOrdenar = "Nome", string Direcao = "ASC");
-        public List<SelectDto> GetDDL();
+        public Task<int> FiltrarCount(string TermoBusca = "");
+
+        public Task<List<Livro>> FiltrarLista(int IniciaEm, int QtdLinhas, string TermoBusca = "", string ColunaOrdenar = "Titulo", string Direcao = "ASC");
+
+        public Task<List<SelectDto>> GetDDL();
     }
 }

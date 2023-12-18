@@ -20,16 +20,26 @@ namespace Amostra.API.Repository
             _mapper = mapper;
         }
 
-        public LivroLst Filtrar(int IniciaEm, int QtdLinhas, string TermoBusca = "", string ColunaOrdenar = "Nome", string Direcao = "ASC")
+        public async Task<int> FiltrarCount(string TermoBusca = "")
         {
-            #region DECLARES
-            LivroLst retorno = new LivroLst();
-            List<Livro> lst = new List<Livro>();
+            #region IQUERYABLE
+            IQueryable<Livro> qryTotalizador = _ctx.Livros;
             #endregion
 
+            #region WHERE
+            if (!string.IsNullOrEmpty(TermoBusca))
+            {
+                qryTotalizador = qryTotalizador.Where(x => x.Titulo.Contains(TermoBusca) || x.Prefacio.Contains(TermoBusca) || x.Autor.Contains(TermoBusca) || x.Editora.Contains(TermoBusca));
+            }
+            #endregion
+
+            return qryTotalizador.ToList().Count();
+        }
+
+        public async Task<List<Livro>> FiltrarLista(int IniciaEm, int QtdLinhas, string TermoBusca = "", string ColunaOrdenar = "Titulo", string Direcao = "ASC")
+        {
             #region IQUERYABLE
             IQueryable<Livro> qry = _ctx.Livros;
-            IQueryable<Livro> qryTotalizador = _ctx.Livros;
             #endregion
 
             #region WHERE
@@ -37,7 +47,6 @@ namespace Amostra.API.Repository
             {
                 qry = qry.Where(x => x.Titulo.Contains(TermoBusca) || x.Prefacio.Contains(TermoBusca) || x.Autor.Contains(TermoBusca) || x.Editora.Contains(TermoBusca));
             }
-            qryTotalizador = qry; 
             #endregion
 
             #region PAGINADOR
@@ -91,19 +100,10 @@ namespace Amostra.API.Repository
             }
             #endregion
 
-            #region RETORNO
-            retorno.ttRows = qryTotalizador.ToList().Count();
-            lst = qry.ToList();
-            if (lst != null && lst.Count > 0)
-            {
-                retorno.lst = _mapper.Map<List<LivroDto>>(lst);
-            }
-            #endregion
-
-            return retorno;
+            return qry.ToList();
         }
 
-        public List<SelectDto> GetDDL()
+        public async Task<List<SelectDto>> GetDDL()
         {
             List<SelectDto> sel = new List<SelectDto>();
             sel = (from o in _ctx.Livros orderby o.Titulo select new SelectDto { id = o.Id, txt = o.Titulo }).ToList();

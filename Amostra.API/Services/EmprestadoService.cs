@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Amostra.API.Services
 {
-    public class EmprestadoService
+    public class EmprestadoService: IEmprestadoService
     {
         private readonly AmostraContext _context;
         private readonly IMapper _mapper;
@@ -21,26 +21,15 @@ namespace Amostra.API.Services
             _unit = unit;
         }
 
-        public async Task<EmprestadoDto> GetValueById(string id)
+        public async Task<int> FiltrarCount(string IdCliente, Guid? IdLivro)
         {
-            EmprestadoDto r = new EmprestadoDto();
-            var Emprestado = _unit.Emprestado.GetValueById(id);
-            if (Emprestado != null)
-            {
-                r = _mapper.Map<EmprestadoDto>(Emprestado);
-            }
-            return r;
+            return await _unit.Emprestado.FiltrarCount(IdCliente, IdLivro);
         }
 
-        public async Task<EmprestadoLst> Filtro(int IniciaEm, int QtdLinhas, string sIdLivro = "", string IdCliente = "", string ColunaOrdenar = "Cliente", string Direcao = "ASC")
+        public async Task<List<EmprestadoDto>> FiltrarList(int IniciaEm, int QtdLinhas, string IdCliente, Guid? IdLivro, string ColunaOrdenar = "Cliente", string Direcao = "ASC")
         {
-            EmprestadoLst r = new EmprestadoLst();
-            Guid IdLivro = Guid.Empty;
-            if (!string.IsNullOrEmpty(sIdLivro.Trim()))
-            {
-                IdLivro = new Guid(sIdLivro);
-            }
-            return _unit.Emprestado.Filtrar(IniciaEm, QtdLinhas, IdCliente, IdLivro, ColunaOrdenar, Direcao);
+            var lst = await _unit.Emprestado.FiltrarLista(IniciaEm, QtdLinhas, IdCliente, IdLivro, ColunaOrdenar, Direcao);
+            return _mapper.Map<List<EmprestadoDto>>(lst);
         }
 
         public async Task<List<ValidationFailure>> Add(EmprestadoVm model)

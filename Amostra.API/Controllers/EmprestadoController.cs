@@ -14,6 +14,8 @@ using AutoMapper;
 using Amostra.API.ViewModel;
 using RestSharp;
 using Amostra.API.Repository;
+using Amostra.API.Services;
+using FluentValidation.Results;
 
 namespace MVC.Controllers
 {
@@ -24,39 +26,22 @@ namespace MVC.Controllers
         private readonly AmostraContext _context;
         private readonly IMapper _mapper;
         private IUnit _unit;
+        private IUniteService _srv;
 
         public EmprestadoController(AmostraContext context, IMapper mapper, IUnit unit)
         {
             _context = context;
             _mapper = mapper;
             _unit = unit;
-        }
-
-        [Authorize(Roles = "Administrator,Cliente")]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetValueById(string id)
-        {
-            try
-            {
-                var Emprestado = _unit.Emprestado.GetValueById(id);
-                if (Emprestado == null)
-                {
-                    return NotFound();
-                }
-                var dto = _mapper.Map<EmprestadoDto>(Emprestado);
-                return Ok(dto);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            _srv = new UniteService(_context, _mapper, _unit);
         }
 
         [Route("Filtro/{IniciaEm}/{QtdLinhas}/{sIdLivro}/{IdCliente}/{ColunaOrdenar}/{Direcao}")]
         [Authorize(Roles = "Administrator,Emprestado")]
         [HttpGet]
-        public async Task<IActionResult> Filtro(int IniciaEm, int QtdLinhas, string sIdLivro = "", string IdCliente = "", string ColunaOrdenar = "Cliente", string Direcao = "ASC")
+        public async Task<IActionResult> GetFiltro(int IniciaEm, int QtdLinhas, string sIdLivro = "", string IdCliente = "", string ColunaOrdenar = "Cliente", string Direcao = "ASC")
         {
+            EmprestadoLst r = new EmprestadoLst();
             try
             {
                 Guid IdLivro = Guid.Empty;
@@ -64,7 +49,9 @@ namespace MVC.Controllers
                 {
                     IdLivro = new Guid(sIdLivro);
                 }
-                return Ok(_unit.Emprestado.Filtrar(IniciaEm, QtdLinhas, IdCliente, IdLivro, ColunaOrdenar, Direcao));
+                r.ttRows = await _srv.EmprestadoSrv.FiltrarCount(IdCliente, IdLivro);
+                r.lst = await _srv.EmprestadoSrv.FiltrarList(IniciaEm, QtdLinhas, IdCliente, IdLivro, ColunaOrdenar, Direcao);
+                return Ok(r);
             }
             catch (Exception ex)
             {
@@ -79,24 +66,12 @@ namespace MVC.Controllers
         {
             try
             {
-                model.Id = Guid.NewGuid();
-                model.Ativo = true;
-                model.Dh = DateTime.Now;
-                var validator = new EmprestadoValidator();
-                var answerValidation = validator.Validate(model);
-                if (!answerValidation.IsValid)
-                {
-                    return BadRequest(answerValidation.Errors);
-                }
-                _unit.Emprestado.Add(_mapper.Map<Emprestado>(model));
-                _unit.Salvar();
-                _unit.Dispose();
+                return Ok(await _srv.EmprestadoSrv.Add(model));
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-            return Ok();
         }
 
         [Route("Update")]
@@ -104,25 +79,16 @@ namespace MVC.Controllers
         [HttpPut]
         public async Task<IActionResult> Update(EmprestadoVm model)
         {
-            List<Emprestado> Emprestados = new List<Emprestado>();
-            Emprestado Emprestado = new Emprestado();
+            List<ValidationFailure> r = new List<ValidationFailure>();
             try
             {
-                var validator = new EmprestadoValidator();
-                var answerValidation = validator.Validate(model);
-                if (!answerValidation.IsValid)
-                {
-                    return BadRequest(answerValidation.Errors);
-                }
-                _unit.Emprestado.Update(_mapper.Map<Emprestado>(model));
-                _unit.Salvar();
-                _unit.Dispose();
+                r = await _srv.EmprestadoSrv.Update(model);
+                return Ok(r);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-            return Ok(Emprestados);
         }
 
         [Route("Delete/{id}")]
@@ -132,20 +98,12 @@ namespace MVC.Controllers
         {
             try
             {
-                var model = _unit.Emprestado.Find(x => x.Id == id).FirstOrDefault();
-                if (model == null)
-                {
-                    return Ok();
-                }
-                _unit.Emprestado.Delete(model);
-                _unit.Salvar();
-                _unit.Dispose();
+                return Ok(await _srv.EmprestadoSrv.Delete(id));
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-            return Ok();
         }
     }
 }

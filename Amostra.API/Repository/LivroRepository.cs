@@ -20,6 +20,13 @@ namespace Amostra.API.Repository
             _mapper = mapper;
         }
 
+        public async Task<Livro?> GetLivro(Guid Id)
+        {
+            IQueryable<Livro> qry = _ctx.Livros;
+            qry = qry.Where(x => x.Id == Id);
+            return qry.FirstOrDefault();
+        }
+
         public async Task<int> FiltrarCount(string TermoBusca = "")
         {
             #region IQUERYABLE
@@ -106,7 +113,7 @@ namespace Amostra.API.Repository
         public async Task<List<SelectDto>> GetDDL()
         {
             List<SelectDto> sel = new List<SelectDto>();
-            sel = (from o in _ctx.Livros orderby o.Titulo select new SelectDto { id = o.Id, txt = o.Titulo }).ToList();
+            sel = (from o in _ctx.Livros orderby o.Titulo select new SelectDto { id = o.Id, txt = o.Titulo, bEmprestado = o.Emprestado }).ToList();
             return sel;
         }
     }

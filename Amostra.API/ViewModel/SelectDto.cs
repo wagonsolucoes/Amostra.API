@@ -5,6 +5,7 @@
         public Guid id { get; set; }
         public string val { get; set; }
         public string txt { get; set; }
+        public bool bEmprestado { get; set; } = false;
         public bool bChecked { get; set; } = false;
         public bool bVisible { get; set; } = true;
     }

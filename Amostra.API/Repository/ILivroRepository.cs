@@ -6,6 +6,8 @@ namespace Amostra.API.Repository
 {
     public interface ILivroRepository : IGenericRepository<Livro>
     {
+        public Task<Livro> GetLivro(Guid Id);
+
         public Task<int> FiltrarCount(string TermoBusca = "");
 
         public Task<List<Livro>> FiltrarLista(int IniciaEm, int QtdLinhas, string TermoBusca = "", string ColunaOrdenar = "Titulo", string Direcao = "ASC");

@@ -23,6 +23,11 @@ namespace Amostra.API.Services
             _unit = unit;
         }
 
+        public async Task<Livro> GetLivro(Guid Id)
+        {
+            return await _unit.Livro.GetLivro(Id);
+        }
+
         public async Task<int> FiltrarCount(string TermoBusca = " ")
         {
             return await _unit.Livro.FiltrarCount(TermoBusca);

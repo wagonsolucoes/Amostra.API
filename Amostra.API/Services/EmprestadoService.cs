@@ -48,6 +48,17 @@ namespace Amostra.API.Services
             {
                 _unit.Emprestado.Add(_mapper.Map<Emprestado>(model));
                 _unit.Salvar();
+                var livro = await _unit.Livro.GetLivro(model.IdLivro);
+                if(livro != null)
+                {
+                    livro.Emprestado = true;
+                    if (model.DhDevolucao != null)
+                    {
+                        livro.Emprestado = false;
+                    }                    
+                    _unit.Livro.Update(livro);
+                    _unit.Salvar();
+                }
                 _unit.Dispose();
             }
             return r;

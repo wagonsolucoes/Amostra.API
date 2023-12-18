@@ -7,6 +7,8 @@ namespace Amostra.API.Services
 {
     public interface ILivroService
     {
+        public Task<Livro> GetLivro(Guid Id);
+
         public Task<int> FiltrarCount(string TermoBusca = " ");
 
         public Task<List<Livro>> FiltrarList(int IniciaEm, int QtdLinhas, string TermoBusca = " ", string ColunaOrdenar = "Titulo", string Direcao = "ASC");
